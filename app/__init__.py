@@ -13,7 +13,4 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 app = FastAPI()
 
-
-@app.get('/')
-def index():
-    return {"message": "Hello World"}
+from app.routes import *  # nopep8
