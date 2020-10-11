@@ -18,7 +18,7 @@ async def authenticate_from_login(
     try:
         account: Optional[AccountInDB] = await account_collection.find_one({"email": email})
         assert(account is not None)
-        assert(check_password_hash(password, account.hashed_password))
+        assert(check_password_hash(password, account["hashed_password"]))
         return create_access_token(account)
     except AssertionError:
         raise HTTPException(

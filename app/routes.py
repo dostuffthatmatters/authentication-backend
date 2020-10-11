@@ -28,9 +28,8 @@ def profile(account: Account = Depends(authenticate_from_token)):
 
 
 @app.post('/register', response_model=Account)
-def register(
+async def register(
     email: str = Form(...),
     password: str = Form(...)
 ):
-    create_account(email, password)
-    return {"email": "Gok World"}
+    return await create_account(email, password)

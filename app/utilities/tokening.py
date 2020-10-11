@@ -12,7 +12,7 @@ def generate_secret_token(length=32):
 
 
 def create_access_token(account: Account):
-    to_encode = account.copy()
+    to_encode = {"email": account["email"], "email_verified": account["email_verified"]}
     expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=HASH_ALGORITHM)
