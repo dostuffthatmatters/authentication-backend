@@ -2,31 +2,15 @@
 import os
 
 from fastapi import FastAPI
-from dotenv import load_dotenv, find_dotenv
+from app.setup import *
 
-import certifi
-import os
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from jose import JWTError, jwt
+from passlib.context import CryptContext
 
-
-# Set correct SSL certificate
-os.environ['SSL_CERT_FILE'] = certifi.where()
-
-
-# Initialize environment variables
-ENV_FILE = find_dotenv()
-if ENV_FILE:
-    load_dotenv(ENV_FILE)
-
-assert os.getenv('ENV') in ['PRODUCTION', 'DEVELOPMENT']
-assert os.getenv('MONGO_DB_CONNECTION_STRING') != None
-
-IN_PRODUCTION = (os.getenv('ENV') == 'PRODUCTION')
-MONGO_DB_CONNECTION_STRING = os.getenv('MONGO_DB_CONNECTION_STRING')
-
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 app = FastAPI()
 
-
-@app.get('/')
-def index():
-    return 'Hello FastAPI', 200
+from app.routes import *  # nopep8
