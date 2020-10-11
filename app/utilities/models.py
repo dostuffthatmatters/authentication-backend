@@ -16,5 +16,6 @@ class User(BaseModel):
     email: str
 
 
-class UserInDB(User):
+class UserInDB(BaseModel):
+    email: str
     hashed_password: str

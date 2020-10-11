@@ -1,6 +1,5 @@
 
-from fastapi import Depends, FastAPI, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi import Depends, FastAPI, HTTPException, status, Form
 from datetime import datetime, timedelta
 
 from app import app, ACCESS_TOKEN_EXPIRE_MINUTES
@@ -13,9 +12,12 @@ def index():
     return {"message": "Hello World"}
 
 
-@app.post("/token", response_model=Token)
-async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = authenticate_user(form_data.username, form_data.password)
+@app.post("/login", response_model=Token)
+def login_for_access_token(
+    email: str = Form(...),
+    password: str = Form(...)
+):
+    user = authenticate_user(email, password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -27,7 +29,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
 
 
 @app.get("/profile", response_model=User)
-async def read_users_me(current_user: User = Depends(get_current_user)):
-    # This route requires the header:
-    # 'Authorization: Bearer <token>'
+def profile(current_user: User = Depends(get_current_user)):
+    # This route requires the form-data to include:
+    # 'access_token': '...'
     return current_user
