@@ -16,14 +16,14 @@ if ENV_FILE:
 
 assert(all([
     isinstance(os.getenv(env_var), str) for env_var in [
-        'ENV', 'MONGO_DB_CONNECTION_STRING', 'PASSWORD_SALT',
+        'ENVIRONMENT', 'MONGO_DB_CONNECTION_STRING', 'PASSWORD_SALT',
         'SECRET_KEY', 'HASH_ALGORITHM', 'ACCESS_TOKEN_EXPIRE_MINUTES'
     ]
 ]))
-assert(os.getenv('ENV') in ['PRODUCTION', 'DEVELOPMENT'])
+assert(os.getenv('ENVIRONMENT') in ['production', 'development'])
 assert(os.getenv('ACCESS_TOKEN_EXPIRE_MINUTES').isnumeric)
 
-IN_PRODUCTION = (os.getenv('ENV') == 'PRODUCTION')
+ENVIRONMENT = os.getenv('ENVIRONMENT')
 MONGO_DB_CONNECTION_STRING = os.getenv('MONGO_DB_CONNECTION_STRING')
 PASSWORD_SALT = os.getenv('PASSWORD_SALT')
 SECRET_KEY = os.getenv('SECRET_KEY')
