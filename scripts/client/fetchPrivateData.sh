@@ -1,3 +1,4 @@
+#!/bin/bash
 
 access_token="..."
 

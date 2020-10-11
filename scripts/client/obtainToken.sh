@@ -1,6 +1,7 @@
+#!/bin/bash
 
 # Execute from the project root directory with
-# 'bash ./scripts/client/obtainToken.bash'
+# 'bash ./scripts/client/obtainToken.sh'
 
 curl -X POST 'http://localhost:8000/token' \
     -H  'accept: application/json' \
