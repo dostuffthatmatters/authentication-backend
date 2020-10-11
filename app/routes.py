@@ -21,10 +21,10 @@ async def login_for_access_token(access_token: Token = Depends(authenticate_from
 
 
 @app.get("/account", response_model=Account)
-async def profile(account: Account = Depends(authenticate_from_token)):
+def profile(account: Account = Depends(authenticate_from_token)):
     # This route requires the form-data to include:
     # 'access_token': '...'
-    return await account
+    return account
 
 
 @app.post('/register', response_model=Account)
