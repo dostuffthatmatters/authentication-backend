@@ -16,15 +16,15 @@ def index():
 
 
 @app.post("/login", response_model=Token)
-def login_for_access_token(access_token: Token = Depends(authenticate_from_login)):
-    return {"access_token": access_token, "token_type": "bearer"}
+async def login_for_access_token(access_token: Token = Depends(authenticate_from_login)):
+    return await {"access_token": access_token, "token_type": "bearer"}
 
 
 @app.get("/account", response_model=Account)
-def profile(account: Account = Depends(authenticate_from_token)):
+async def profile(account: Account = Depends(authenticate_from_token)):
     # This route requires the form-data to include:
     # 'access_token': '...'
-    return account
+    return await account
 
 
 @app.post('/register', response_model=Account)

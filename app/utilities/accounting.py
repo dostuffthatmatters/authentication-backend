@@ -9,10 +9,10 @@ from app.utilities.models import AccountInDB
 from app.utilities.validating import validate_password_format
 
 
-def get_account(email: str):
-    # 1. Find user with email
-    # 2. Return user model or Nothing
-    return {'email': 'abc@de.fg', "email_verified": False}
+async def get_account(email: str):
+    account: Optional[AccountInDB] = \
+        await account_collection.find_one({"email": email})
+    return {'email': account["email"], "email_verified": account["email_verified"]}
 
 
 async def create_account(email: str, password: str):
