@@ -323,6 +323,17 @@ pycrypto = ["pycrypto (>=2.6.0,<2.7.0)", "pyasn1"]
 pycryptodome = ["pycryptodome (>=3.3.1,<4.0.0)", "pyasn1"]
 
 [[package]]
+name = "python-multipart"
+version = "0.0.5"
+description = "A streaming multipart parser for Python"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+six = ">=1.4.0"
+
+[[package]]
 name = "rsa"
 version = "4.6"
 description = "Pure-Python RSA implementation"
@@ -386,7 +397,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "a7fbd8f25a872b3cd89900c0b83a0b71a818a08c2d2322534eca9cd3c52bd491"
+content-hash = "6302b94897c7f4e9e8a0a4c0690dfdfaafd4077baf975239e58fb61c251b0d19"
 
 [metadata.files]
 atomicwrites = [
@@ -632,6 +643,9 @@ python-dotenv = [
 python-jose = [
     {file = "python-jose-3.2.0.tar.gz", hash = "sha256:4e4192402e100b5fb09de5a8ea6bcc39c36ad4526341c123d401e2561720335b"},
     {file = "python_jose-3.2.0-py2.py3-none-any.whl", hash = "sha256:67d7dfff599df676b04a996520d9be90d6cdb7e6dd10b4c7cacc0c3e2e92f2be"},
+]
+python-multipart = [
+    {file = "python-multipart-0.0.5.tar.gz", hash = "sha256:f7bb5f611fc600d15fa47b3974c8aa16e93724513b49b5f95c81e6624c83fa43"},
 ]
 rsa = [
     {file = "rsa-4.6-py3-none-any.whl", hash = "sha256:6166864e23d6b5195a5cfed6cd9fed0fe774e226d8f854fcb23b7bbef0350233"},
