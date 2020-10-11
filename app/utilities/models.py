@@ -12,9 +12,11 @@ class TokenData(BaseModel):
     email: str
 
 
-class User(BaseModel):
+class Account(BaseModel):
     email: str
+    email_verified: bool
 
 
-class UserInDB(User):
+class AccountInDB(Account):
     hashed_password: str
+    email_token: str
