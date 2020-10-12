@@ -1,18 +1,17 @@
 
 from tests.conftest import get_content_dict
 
-TEST_ACCOUNT_1 = {"email": "c", "password": "000000d!"}
-TEST_ACCOUNT_2 = {"email": "c", "password": "000000a!"}
+TEST_ACCOUNT = {"email": "c", "password": "000000d!"}
 
 
 def test_login(client):
-    response = client.post("/register", data=TEST_ACCOUNT_2)
-    assert(response.status_code == 200)
-
-    response = client.post("/login", data=TEST_ACCOUNT_1)
+    response = client.post("/login", data=TEST_ACCOUNT)
     assert(response.status_code == 401)
 
-    response = client.post("/login", data=TEST_ACCOUNT_2)
+    response = client.post("/register", data=TEST_ACCOUNT)
+    assert(response.status_code == 200)
+
+    response = client.post("/login", data=TEST_ACCOUNT)
     assert(response.status_code == 200)
 
     content_dict = get_content_dict(response)
