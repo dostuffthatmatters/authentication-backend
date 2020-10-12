@@ -1,3 +1,5 @@
+[![Maintainability](https://api.codeclimate.com/v1/badges/87b6138295fbf87fab46/maintainability)](https://codeclimate.com/github/fastsurvey/authentication-backend/maintainability)
+
 # Authentication API
 
 We actually wanted to use an OAuth2 authentication service rather than build these features ourselves - yet again.
