@@ -1,0 +1,27 @@
+name: Test
+
+on:
+    push:
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v2
+            - name: Set up Python 3.8
+              uses: actions/setup-python@v2
+              with:
+                  python-version: 3.8
+            - name: Install poetry
+              uses: dschep/install-poetry-action@v1.3
+            - name: Install Python Dependencies
+              run: poetry install
+            - name: Test with pytest
+              run: poetry run pytest --cov=app --cov-report=term-missing --cov-report=xml tests
+            - name: Push Coverage Report to CodeClimate
+              uses: paambaati/codeclimate-action@v2.3.0
+              env:
+                  CC_TEST_REPORTER_ID: 9ff2df1710b0e2aa028f0cc77303b6b7fde5c9357a969972a95921ae4c0bdce7
+              with:
+                  coverageCommand: true
