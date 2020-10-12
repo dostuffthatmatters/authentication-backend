@@ -51,7 +51,7 @@ async def verify_account(email_token: str, password: str):
     try:
         account = await account_collection.find_one({"email_token": email_token})
         assert(account is not None)
-        assert(check_password_hash(password, account.password_hash))
+        assert(check_password_hash(password, account["hashed_password"]))
         await account_collection.update_one(
             {"email_token": email_token},
             {'$set': {'email_verified': True}}

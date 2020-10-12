@@ -45,7 +45,7 @@ async def register(
     return await create_account(email, password)
 
 
-@app.post('/verify/', response_model=Account)
+@app.post('/verify')
 async def register(
     email_token: str = Form(...),
     password: str = Form(...)
