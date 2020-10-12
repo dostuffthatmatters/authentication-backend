@@ -4,18 +4,6 @@ import os
 import time
 
 
-def test_environment(client):
-    response = client.get("/")
-    assert(response.status_code == 200)
-    assert(isinstance(response.content, bytes))
-    content_string = response.content.decode()
-    assert(isinstance(content_string, str))
-    content_dict = json.loads(content_string)
-    assert(isinstance(content_dict, dict))
-    assert(all([key in content_dict for key in ["status", "mode"]]))
-    assert(content_dict["mode"] == "testing")
-
-
 TEST_SET_1 = [
     {
         "data": {"email": "a", "password": "000000aa"},

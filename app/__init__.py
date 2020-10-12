@@ -17,5 +17,6 @@ account_collection = database['authentication']
 
 if ENVIRONMENT == "testing":
     account_collection.delete_many({})
+    time.sleep(1)
 
 from app.routes import *  # nopep8
