@@ -1,4 +1,5 @@
 
+import time
 import os
 
 from fastapi import FastAPI
@@ -15,10 +16,9 @@ database = motor_client[ENVIRONMENT]
 account_collection = database['authentication']
 
 if ENVIRONMENT == "testing":
-    if account_collection is not None:
-        account_collection.drop()
+    account_collection.drop()
+    time.sleep(1.5)  # Without this the test will not work properly ...
     database.create_collection('authentication')
     account_collection = database['authentication']
-
 
 from app.routes import *  # nopep8
