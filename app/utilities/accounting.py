@@ -17,6 +17,8 @@ async def get_account(email: str):
 
 async def create_account(email: str, password: str):
 
+    # TODO: Find one and insert in one atomic operation!!!
+
     existing_account: Optional[AccountInDB] = \
         await account_collection.find_one({"email": email})
 

@@ -48,4 +48,4 @@ def test_registration():
         response = client.post("/register", data=test["data"])
         print(f"test: {test}, \nresponse: {response.content}\n")  # Only prints if test fails
         assert(response.status_code == (200 if test["result"] else 400))
-        # time.sleep(0.1)  #
+        time.sleep(0.5)  # Account creation does not use atomic operations yet! Required!!!
