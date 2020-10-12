@@ -16,9 +16,6 @@ database = motor_client[ENVIRONMENT]
 account_collection = database['authentication']
 
 if ENVIRONMENT == "testing":
-    account_collection.drop()
-    time.sleep(1.5)  # Without this the test will not work properly ...
-    database.create_collection('authentication')
-    account_collection = database['authentication']
+    account_collection.delete_many({})
 
 from app.routes import *  # nopep8
