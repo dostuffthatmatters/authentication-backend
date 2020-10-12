@@ -17,17 +17,6 @@ async def get_account(email: str):
 
 async def create_account(email: str, password: str):
 
-    # TODO: Find one and insert in one atomic operation!!!
-
-    existing_account: Optional[AccountInDB] = \
-        await account_collection.find_one({"email": email})
-
-    if existing_account is not None:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email already taken",
-        )
-
     if not validate_password_format(password):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -41,9 +30,16 @@ async def create_account(email: str, password: str):
         "email_verified": False
     }
 
-    # TODO: Send verification mail
+    try:
+        # collection has a unique index on "email"
+        await account_collection.insert_one(account_model)
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email already taken",
+        )
 
-    account_collection.insert_one(account_model)
+    # TODO: Send verification mail
 
     return {
         "email": email,
