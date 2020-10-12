@@ -1,6 +1,6 @@
 
 from typing import Optional
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Response
 
 from app import account_collection
 from app.utilities.hashing import generate_password_hash
@@ -45,3 +45,7 @@ async def create_account(email: str, password: str):
         "email": email,
         "email_verified": False
     }
+
+
+async def verify_account(email_token: str, password: str):
+    return {"message": "success"}
