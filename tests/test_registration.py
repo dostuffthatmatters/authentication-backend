@@ -1,17 +1,10 @@
 
 import json
 import os
-os.environ["ENVIRONMENT"] = "testing"  # nopep8
-
-from fastapi.testclient import TestClient
-from app import app
 import time
 
 
-client = TestClient(app)
-
-
-def test_environment():
+def test_environment(client):
     response = client.get("/")
     assert(response.status_code == 200)
     assert(isinstance(response.content, bytes))
@@ -43,9 +36,9 @@ TEST_SET_1 = [
 ]
 
 
-def test_registration():
+def test_registration(client):
     for test in TEST_SET_1:
         response = client.post("/register", data=test["data"])
         print(f"test: {test}, \nresponse: {response.content}\n")  # Only prints if test fails
         assert(response.status_code == (200 if test["result"] else 400))
-        time.sleep(0.5)  # Account creation does not use atomic operations yet! Required!!!
+        time.sleep(0.1)  # Account creation does not use atomic operations yet! Required!!!
