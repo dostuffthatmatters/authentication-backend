@@ -20,14 +20,17 @@ def index():
 
 @app.post("/login", response_model=Token)
 async def login_for_access_token(access_token: Token = Depends(authenticate_from_login)):
-    return await {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token, "token_type": "bearer"}
 
 
-@app.get("/account", response_model=Account)
-def profile(account: Account = Depends(authenticate_from_token)):
+# POST and not a GET request because a GET request:
+# 1. might get cached
+# 2. does not have a body (no TLS encryption on the token)
+@app.post("/account", response_model=Account)
+async def profile(account: Account = Depends(authenticate_from_token)):
     # This route requires the form-data to include:
     # 'access_token': '...'
-    return account
+    return await account
 
 
 @app.post('/register', response_model=Account)

@@ -32,6 +32,4 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 HASH_ALGORITHM = os.getenv('HASH_ALGORITHM')
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv('ACCESS_TOKEN_EXPIRE_MINUTES'))
 
-if ENVIRONMENT is None:
-    # If not testing
-    ENVIRONMENT = os.getenv('ENVIRONMENT')
+os.getenv('ENVIRONMENT') if ENVIRONMENT is None else ENVIRONMENT

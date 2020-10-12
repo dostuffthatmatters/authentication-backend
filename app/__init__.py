@@ -16,9 +16,12 @@ database = motor_client[ENVIRONMENT]
 account_collection = database['authentication']
 
 if ENVIRONMENT == "testing":
-    account_collection.drop()
-    time.sleep(1.5)  # Without this the test will not work properly ...
-    database.create_collection('authentication')
-    account_collection = database['authentication']
+    # Using the synchronous pymongo library because I
+    # want to keep the test synchronous as well. No real
+    # advantage from having asynchronous test just more
+    # complexity - for now ...
+    from pymongo import MongoClient
+    client = MongoClient(MONGO_DB_CONNECTION_STRING)
+    client["testing"]['authentication'].delete_many({})
 
 from app.routes import *  # nopep8
