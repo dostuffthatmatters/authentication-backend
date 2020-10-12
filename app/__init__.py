@@ -14,4 +14,11 @@ motor_client = AsyncIOMotorClient(MONGO_DB_CONNECTION_STRING)
 database = motor_client[ENVIRONMENT]
 account_collection = database['authentication']
 
+if ENVIRONMENT == "testing":
+    if account_collection is not None:
+        account_collection.drop()
+    database.create_collection('authentication')
+    account_collection = database['authentication']
+
+
 from app.routes import *  # nopep8

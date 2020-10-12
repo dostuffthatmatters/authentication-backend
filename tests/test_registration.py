@@ -9,6 +9,13 @@ from app import app
 
 client = TestClient(app)
 
+TEST_SET = [
+    {"email": "a", "password": "00000000", "result": False},  # Invalid format
+    {"email": "a", "password": "000000a!", "result": True},
+    {"email": "a", "password": "000000b!", "result": False},  # Email already taken
+    {"email": "b", "password": "000000c!", "result": True},
+]
+
 
 def test_environment():
     response = client.get("/")
