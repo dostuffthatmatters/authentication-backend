@@ -7,12 +7,15 @@ from app.utilities.authenticating import \
     authenticate_from_login, authenticate_from_token
 from app.utilities.accounting import create_account
 
-from app import app, ACCESS_TOKEN_EXPIRE_MINUTES
+from app import app, ACCESS_TOKEN_EXPIRE_MINUTES, ENVIRONMENT
 
 
 @app.get('/')
 def index():
-    return {"message": "Hello World"}
+    return {
+        "status": "running",
+        "mode": ENVIRONMENT
+    }
 
 
 @app.post("/login", response_model=Token)
