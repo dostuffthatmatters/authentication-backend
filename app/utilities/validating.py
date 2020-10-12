@@ -10,7 +10,4 @@ def validate_password_format(password: str):
     except AssertionError:
         return False
 
-
-if __name__ == '__main__':
-    assert(not validate_password_format("sda"))
-    assert(validate_password_format("sdasdad8!"))
+# Validating the Email format here is useless ;)
