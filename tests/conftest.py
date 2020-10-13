@@ -33,3 +33,6 @@ def get_content_dict(response):
     content_dict = json.loads(content_string)
     assert(isinstance(content_dict, dict))
     return content_dict
+
+
+TEST_EMAIL_DOMAIN = "@testing.fastsurvey.io"
