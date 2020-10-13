@@ -27,7 +27,7 @@ if ENVIRONMENT == "testing":
 
 # I really don't know why the index is called "email_1"
 # instead of just "email"
-db_indexes = pymongo_client["testing"]['authentication'].index_information()
+db_indexes = pymongo_client[ENVIRONMENT]['authentication'].index_information()
 if "email_1" not in db_indexes:
     print(f"db_indexes: {db_indexes}")
     print("Creating email uniqueness index")
@@ -37,9 +37,9 @@ if "email_1" not in db_indexes:
 del pymongo_client
 del MongoClient
 
-https_client = httpx.AsyncClient(
+httpx_client = httpx.AsyncClient(
     auth=('api', MAILGUN_API_KEY),
-    base_url="https://api.eu.mailgun.net/v3/admin.fastsurvey.io"
+    base_url="https://api.eu.mailgun.net/v3/email.fastsurvey.io"
 )
 
 from app.routes import *  # nopep8

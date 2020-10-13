@@ -7,6 +7,7 @@ from app.utilities.hashing import generate_password_hash, check_password_hash
 from app.utilities.tokening import generate_secret_token
 from app.utilities.models import AccountInDB
 from app.utilities.validating import validate_password_format
+from app.utilities.mailing import send_verification_mail
 
 
 async def get_account(email: str):
@@ -32,6 +33,8 @@ async def create_account(email: str, password: str):
 
     try:
         # collection has a unique index on "email"
+        # -> trying to insert a mail that already exists
+        # will result in an error
         await account_collection.insert_one(account_model)
     except Exception:
         raise HTTPException(
@@ -39,7 +42,14 @@ async def create_account(email: str, password: str):
             detail="email already taken",
         )
 
-    # TODO: Send verification mail
+    try:
+        await send_verification_mail(account_model)
+    except AssertionError:
+        await account_collection.delete_one({"email": email})
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"verification could not be sent",
+        )
 
     return {
         "email": email,
