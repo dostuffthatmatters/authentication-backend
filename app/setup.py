@@ -20,7 +20,8 @@ if ENV_FILE:
 assert(all([
     isinstance(os.getenv(env_var), str) for env_var in [
         'ENVIRONMENT', 'MONGO_DB_CONNECTION_STRING', 'PASSWORD_SALT',
-        'SECRET_KEY', 'HASH_ALGORITHM', 'ACCESS_TOKEN_EXPIRE_MINUTES'
+        'SECRET_KEY', 'HASH_ALGORITHM', 'ACCESS_TOKEN_EXPIRE_MINUTES',
+        'MAILGUN_API_KEY'
     ]
 ]))
 assert(os.getenv('ENVIRONMENT') in ['production', 'development', 'testing'])
@@ -31,5 +32,6 @@ PASSWORD_SALT = os.getenv('PASSWORD_SALT')
 SECRET_KEY = os.getenv('SECRET_KEY')
 HASH_ALGORITHM = os.getenv('HASH_ALGORITHM')
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv('ACCESS_TOKEN_EXPIRE_MINUTES'))
+MAILGUN_API_KEY = os.getenv('MAILGUN_API_KEY')
 
 ENVIRONMENT = os.getenv('ENVIRONMENT') if ENVIRONMENT is None else ENVIRONMENT
