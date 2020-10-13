@@ -26,6 +26,9 @@ jobs:
                   PASSWORD_SALT: ${{ secrets.PASSWORD_SALT }}
                   HASH_ALGORITHM: ${{ secrets.HASH_ALGORITHM }}
                   ACCESS_TOKEN_EXPIRE_MINUTES: ${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}
+                  MAILGUN_API_KEY: ${{ secrets.MAILGUN_API_KEY }}
+                  ADMIN_FRONTEND_URL: ${{ secrets.ADMIN_FRONTEND_URL }}
+                  AUTHENTICATION_BACKEND_URL: ${{ secrets.AUTHENTICATION_BACKEND_URL }}
             - name: Push Coverage Report to CodeClimate
               uses: paambaati/codeclimate-action@v2.3.0
               env:
