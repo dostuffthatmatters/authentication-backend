@@ -17,6 +17,7 @@ python-multipart = "^0.0.5"
 dnspython = "^2.0.0"
 requests = "^2.24.0"
 pytest-cov = "^2.10.1"
+httpx = "^0.16.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^4.6"

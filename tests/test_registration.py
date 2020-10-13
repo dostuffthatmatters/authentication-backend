@@ -2,23 +2,26 @@
 import json
 import os
 import time
-
+from tests.conftest import TEST_EMAIL_DOMAIN
 
 TEST_SET_1 = [
     {
         "data": {"email": "a", "password": "000000aa"},
-        "result": False  # Invalid format
+        "result": False  # Invalid emailformat
     }, {
-        "data": {"email": "a", "password": "000000a!"},
+        "data": {"email": "a" + TEST_EMAIL_DOMAIN, "password": "000000aa"},
+        "result": False  # Invalid password format
+    }, {
+        "data": {"email": "a" + TEST_EMAIL_DOMAIN, "password": "000000a!"},
         "result": True
     }, {
-        "data": {"email": "a", "password": "000000b!"},
-        "result": False  # Invalid format
+        "data": {"email": "a" + TEST_EMAIL_DOMAIN, "password": "000000b!"},
+        "result": False  # Email already taken
     }, {
-        "data": {"email": "b", "password": "000000c!"},
+        "data": {"email": "b" + TEST_EMAIL_DOMAIN, "password": "000000c!"},
         "result": True
     }, {
-        "data": {"email": "b", "password": "000000d!"},
+        "data": {"email": "b" + TEST_EMAIL_DOMAIN, "password": "000000d!"},
         "result": False
     },
 ]

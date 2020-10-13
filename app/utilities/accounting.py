@@ -1,12 +1,13 @@
 
 from typing import Optional
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Response
 
 from app import account_collection
-from app.utilities.hashing import generate_password_hash
+from app.utilities.hashing import generate_password_hash, check_password_hash
 from app.utilities.tokening import generate_secret_token
 from app.utilities.models import AccountInDB
 from app.utilities.validating import validate_password_format
+from app.utilities.mailing import send_verification_mail
 
 
 async def get_account(email: str):
@@ -20,7 +21,7 @@ async def create_account(email: str, password: str):
     if not validate_password_format(password):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Password format invalid",
+            detail="password format invalid",
         )
 
     account_model = {
@@ -32,16 +33,42 @@ async def create_account(email: str, password: str):
 
     try:
         # collection has a unique index on "email"
+        # -> trying to insert a mail that already exists
+        # will result in an error
         await account_collection.insert_one(account_model)
     except Exception:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email already taken",
+            detail="email already taken",
         )
 
-    # TODO: Send verification mail
+    try:
+        await send_verification_mail(account_model)
+    except AssertionError:
+        await account_collection.delete_one({"email": email})
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"verification could not be sent",
+        )
 
     return {
         "email": email,
         "email_verified": False
     }
+
+
+async def verify_account(email_token: str, password: str):
+    try:
+        account = await account_collection.find_one({"email_token": email_token})
+        assert(account is not None)
+        assert(check_password_hash(password, account["hashed_password"]))
+        await account_collection.update_one(
+            {"email_token": email_token},
+            {'$set': {'email_verified': True}}
+        )
+        return {"status": "success"}
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="email_token or password invalid",
+        )
