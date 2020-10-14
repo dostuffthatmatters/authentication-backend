@@ -4,10 +4,12 @@ import os
 import httpx
 
 from fastapi import FastAPI
-from app.setup import *
 from passlib.context import CryptContext
 from pymongo import MongoClient
 from motor.motor_asyncio import AsyncIOMotorClient
+
+# Set all environment variables
+from app.init_env import *
 
 app = FastAPI()
 
