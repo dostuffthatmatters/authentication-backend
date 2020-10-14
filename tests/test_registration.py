@@ -6,8 +6,8 @@ from tests.conftest import TEST_EMAIL_DOMAIN
 
 TEST_SET_1 = [
     {
-        "data": {"email": "a", "password": "000000aa"},
-        "result": False  # Invalid emailformat
+        "data": {"email": "a", "password": "000000a!"},
+        "result": False  # Invalid email format
     }, {
         "data": {"email": "a" + TEST_EMAIL_DOMAIN, "password": "000000aa"},
         "result": False  # Invalid password format
