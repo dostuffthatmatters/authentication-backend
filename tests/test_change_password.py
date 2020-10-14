@@ -1,9 +1,28 @@
 
-from tests.conftest import get_content_dict, TEST_EMAIL_DOMAIN
+from symbol import and_test
 
+from tests.conftest import TEST_EMAIL_DOMAIN, get_content_dict
 
 TEST_ACCOUNT = {"email": "e" + TEST_EMAIL_DOMAIN, "password": "123456a!"}
 MODIFIED_TEST_ACCOUNT = {"email": "e" + TEST_EMAIL_DOMAIN, "password": "123456a!!!"}
+
+
+def login(client, data, status_code):
+    response = client.post("/login", data=data)
+    assert(response.status_code == status_code)
+    if status_code == 200:
+        return get_content_dict(response)["access_token"]
+
+
+def change_password(
+    client, access_token, old_password, new_password, status_code
+):
+    response = client.post("/change-password", data={
+        "access_token": access_token,
+        "old_password": old_password,
+        "new_password": new_password,
+    })
+    assert(response.status_code == status_code)
 
 
 def account(account_collection):
@@ -14,59 +33,58 @@ def account(account_collection):
 
 def test_login(client, account_collection):
     # Login with not-registered account
-    response = client.post("/login", data=TEST_ACCOUNT)
-    assert(response.status_code == 401)
+    login(client, TEST_ACCOUNT, 401)
 
     # Registered that account
     response = client.post("/register", data=TEST_ACCOUNT)
     assert(response.status_code == 200)
 
     # Login with registered account
-    response = client.post("/login", data=TEST_ACCOUNT)
-    assert(response.status_code == 200)
-    access_token = get_content_dict(response)["access_token"]
+    access_token = login(client, TEST_ACCOUNT, 200)
+
+    assert(account(account_collection)["email_verified"] == False)
+
+    for test in [
+        {
+            # access_token invalid
+            "access_token": "123",
+            "old_password": "123",
+            "new_password": "123",
+            "status_code": 401
+        }, {
+            # email not verified
+            "access_token": access_token,
+            "old_password": "123",
+            "new_password": MODIFIED_TEST_ACCOUNT["password"],
+            "status_code": 401
+        }
+    ]:
+        change_password(client, **test)
 
     account_in_db = account(account_collection)
     assert(account_in_db["email_verified"] == False)
-
-    response = client.post("/change-password", data={
-        "access_token": access_token,
-        "old_password": TEST_ACCOUNT["password"],
-        "new_password": MODIFIED_TEST_ACCOUNT["password"],
-    })
-    assert(response.status_code == 401)
-
     client.post("/verify", data={
         "email_token": account_in_db["email_token"],
         "password": TEST_ACCOUNT["password"]
     })
+    assert(account(account_collection)["email_verified"] == True)
 
-    account_in_db = account(account_collection)
-    assert(account_in_db["email_verified"] == True)
+    for test in [
+        {
+            "old_password": "123",
+            "new_password": "123",
+            "status_code": 400
+        }, {
+            "old_password": "123",
+            "new_password": MODIFIED_TEST_ACCOUNT["password"],
+            "status_code": 401
+        }, {
+            "old_password": TEST_ACCOUNT["password"],
+            "new_password": MODIFIED_TEST_ACCOUNT["password"],
+            "status_code": 200
+        }
+    ]:
+        change_password(client, access_token, **test)
 
-    response = client.post("/change-password", data={
-        "access_token": access_token,
-        "old_password": "123",
-        "new_password": "123",
-    })
-    assert(response.status_code == 400)
-
-    response = client.post("/change-password", data={
-        "access_token": access_token,
-        "old_password": "123",
-        "new_password": MODIFIED_TEST_ACCOUNT["password"],
-    })
-    assert(response.status_code == 401)
-
-    response = client.post("/change-password", data={
-        "access_token": access_token,
-        "old_password": TEST_ACCOUNT["password"],
-        "new_password": MODIFIED_TEST_ACCOUNT["password"],
-    })
-    assert(response.status_code == 200)
-
-    response = client.post("/login", data=TEST_ACCOUNT)
-    assert(response.status_code == 401)
-
-    response = client.post("/login", data=MODIFIED_TEST_ACCOUNT)
-    assert(response.status_code == 200)
+    login(client, TEST_ACCOUNT, 401)
+    login(client, MODIFIED_TEST_ACCOUNT, 200)
