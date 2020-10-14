@@ -28,7 +28,7 @@ jobs:
                   ACCESS_TOKEN_EXPIRE_MINUTES: ${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}
                   MAILGUN_API_KEY: ${{ secrets.MAILGUN_API_KEY }}
                   ADMIN_FRONTEND_URL: ${{ secrets.ADMIN_FRONTEND_URL }}
-                  AUTHENTICATION_BACKEND_URL: ${{ secrets.AUTHENTICATION_BACKEND_URL }}
+                  AUTH_BACKEND_URL: ${{ secrets.AUTH_BACKEND_URL }}
             - name: Push Coverage Report to CodeClimate
               uses: paambaati/codeclimate-action@v2.3.0
               env:
