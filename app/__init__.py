@@ -9,7 +9,7 @@ from pymongo import MongoClient
 from motor.motor_asyncio import AsyncIOMotorClient
 
 # Set all environment variables
-from app.init_env import *
+from app.setup import *
 
 app = FastAPI()
 
