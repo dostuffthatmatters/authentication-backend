@@ -5,13 +5,13 @@ from datetime import datetime, timedelta
 from app.utilities.models import Token, Account
 from app.utilities.authenticating import \
     authenticate_from_login, authenticate_from_token
-from app.utilities.accounting import create_account, verify_account
+from app.utilities.accounting import create_account, verify_account, change_password
 
 from app import app, ACCESS_TOKEN_EXPIRE_MINUTES, ENVIRONMENT
 
 
 @app.get('/')
-def index():
+def index_route():
     return {
         "status": "running",
         "mode": ENVIRONMENT
@@ -19,7 +19,7 @@ def index():
 
 
 @app.post("/login", response_model=Token)
-async def login_for_access_token(
+async def login_route(
     email: str = Form(...),
     password: str = Form(...)
 ):
@@ -27,18 +27,8 @@ async def login_for_access_token(
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-# POST and not a GET request because a GET request:
-# 1. might get cached
-# 2. does not have a body (no TLS encryption on the token)
-@app.post("/account", response_model=Account)
-async def profile(
-    access_token: str = Form(...)
-):
-    return await authenticate_from_token(access_token)
-
-
 @app.post('/register', response_model=Account)
-async def register(
+async def register_route(
     email: str = Form(...),
     password: str = Form(...)
 ):
@@ -46,8 +36,28 @@ async def register(
 
 
 @app.post('/verify')
-async def register(
+async def verify_route(
     email_token: str = Form(...),
     password: str = Form(...)
 ):
     return await verify_account(email_token, password)
+
+
+# POST and not a GET request because a GET request:
+# 1. might get cached
+# 2. does not have a body (no TLS encryption on the token)
+@app.post("/account", response_model=Account)
+async def account_route(
+    access_token: str = Form(...)
+):
+    return await authenticate_from_token(access_token)
+
+
+@app.post('/change-password')
+async def change_password_route(
+    access_token: str = Form(...),
+    old_password: str = Form(...),
+    new_password: str = Form(...)
+):
+    account = await authenticate_from_token(access_token)
+    return await change_password(account, old_password, new_password)
