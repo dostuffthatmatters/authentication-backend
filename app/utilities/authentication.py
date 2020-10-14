@@ -4,11 +4,13 @@ from datetime import datetime, timedelta
 from fastapi import HTTPException, status, Form
 from jose import jwt, JWTError
 
-from app import ACCESS_TOKEN_EXPIRE_MINUTES, SECRET_KEY, HASH_ALGORITHM, account_collection
-from app.utilities.tokening import create_access_token
-from app.utilities.accounting import get_account
-from app.utilities.hashing import check_password_hash
-from app.utilities.models import AccountInDB
+from app import ACCESS_TOKEN_EXPIRE_MINUTES, \
+    SECRET_KEY, HASH_ALGORITHM, account_collection
+
+from app.utilities.encryption import \
+    create_access_token, check_password_hash
+
+from app.utilities.account_functions import get_account
 
 
 async def authenticate_from_login(
@@ -16,7 +18,7 @@ async def authenticate_from_login(
     password: str = Form(...)
 ):
     try:
-        account: Optional[AccountInDB] = await account_collection.find_one({"email": email})
+        account = await account_collection.find_one({"email": email})
         assert(account is not None)
         assert(check_password_hash(password, account["hashed_password"]))
         return create_access_token(account)

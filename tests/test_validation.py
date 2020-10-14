@@ -1,5 +1,5 @@
 
-from app.utilities.validating import validate_password_format
+from app.utilities.encryption import validate_password_format
 
 TEST_SET = [
     {"password": "abc", "result": False},

@@ -3,17 +3,18 @@ from typing import Optional
 from fastapi import HTTPException, status, Response
 
 from app import account_collection
-from app.utilities.hashing import generate_password_hash, check_password_hash
-from app.utilities.tokening import generate_secret_token
-from app.utilities.models import AccountInDB
-from app.utilities.validating import validate_password_format
+from app.utilities.encryption import generate_password_hash, \
+    check_password_hash, generate_secret_token, validate_password_format
 from app.utilities.mailing import send_verification_mail
 
 
 async def get_account(email: str):
-    account: Optional[AccountInDB] = \
-        await account_collection.find_one({"email": email})
-    return {'email': account["email"], "email_verified": account["email_verified"]}
+    account = await account_collection.find_one({"email": email})
+    # I don't wall all data in the database to be part of the returned model!
+    return {
+        'email': account["email"],
+        "email_verified": account["email_verified"]
+    }
 
 
 async def create_account(email: str, password: str):
