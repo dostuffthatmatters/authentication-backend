@@ -1,12 +1,11 @@
+
 import hashlib
-from app import PASSWORD_SALT, pwd_context
-
-
 import secrets
 from datetime import datetime, timedelta
 from jose import jwt
 
-from app import ACCESS_TOKEN_EXPIRE_MINUTES, SECRET_KEY, HASH_ALGORITHM
+from app import PASSWORD_SALT, ACCESS_TOKEN_EXPIRE_MINUTES, \
+    SECRET_KEY, HASH_ALGORITHM, pwd_context
 
 
 def check_password_hash(plain_password: str, hashed_password: str):

@@ -3,6 +3,7 @@ from typing import Optional
 from fastapi import HTTPException, status, Response
 
 from app import account_collection
+
 from app.utilities.encryption import generate_password_hash, \
     check_password_hash, generate_secret_token, validate_password_format
 from app.utilities.mailing import send_verification_mail

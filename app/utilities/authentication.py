@@ -9,7 +9,6 @@ from app import ACCESS_TOKEN_EXPIRE_MINUTES, \
 
 from app.utilities.encryption import \
     create_access_token, check_password_hash
-
 from app.utilities.account_functions import get_account
 
 

@@ -2,7 +2,6 @@
 import time
 import os
 import httpx
-
 from fastapi import FastAPI
 from passlib.context import CryptContext
 from pymongo import MongoClient
