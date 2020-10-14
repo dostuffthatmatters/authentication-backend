@@ -75,4 +75,27 @@ async def verify_account(email_token: str, password: str):
 
 
 async def change_password(account, old_password, new_password):
+    if not account["email_verified"]:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="email address not verified yet",
+        )
+
+    if not validate_password_format(new_password):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="new_password format invalid",
+        )
+
+    if not check_password_hash(old_password, account["hashed_password"]):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="old_password invalid",
+        )
+
+    await account_collection.update_one(
+        {"email": account["email"]},
+        {"$set": {"hashed_password": generate_password_hash(new_password)}}
+    )
+
     return {"status": "success"}
