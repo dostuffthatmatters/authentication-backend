@@ -53,7 +53,7 @@ async def account_route(
     return await authenticate_from_token(access_token)
 
 
-@app.put('/change-password')
+@app.post('/change-password')
 async def change_password_route(
     access_token: str = Form(...),
     old_password: str = Form(...),

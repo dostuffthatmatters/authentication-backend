@@ -87,7 +87,9 @@ async def change_password(account, old_password, new_password):
             detail="new_password format invalid",
         )
 
-    if not check_password_hash(old_password, account["hashed_password"]):
+    db_account = await account_collection.find_one({"email": account["email"]})
+
+    if not check_password_hash(old_password, db_account["hashed_password"]):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="old_password invalid",
