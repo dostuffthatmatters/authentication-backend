@@ -72,3 +72,7 @@ async def verify_account(email_token: str, password: str):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="email_token or password invalid",
         )
+
+
+async def change_password(account, old_password, new_password):
+    return {"status": "success"}
