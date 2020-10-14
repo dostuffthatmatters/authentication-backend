@@ -2,7 +2,7 @@
 from fastapi import Depends, FastAPI, HTTPException, status, Form
 from datetime import datetime, timedelta
 
-from app.utilities.models import Token, Account, ModifiedAccount
+from app.utilities.models import Token, Account
 from app.utilities.authenticating import \
     authenticate_from_login, authenticate_from_token
 from app.utilities.accounting import create_account, verify_account, change_password
