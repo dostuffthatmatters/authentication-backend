@@ -6,7 +6,7 @@ async def send_verification_mail(db_account):
     data = {
         'from': 'FastSurvey <noreply@admin.fastsurvey.io>',
         'to': db_account["email"],
-        'subject': 'Please verify your FastSurvey account',
+        'subject': 'Verify your FastSurvey account',
         'html': verification_email_html(db_account),
         'o:testmode': ENVIRONMENT == 'testing'
     }
@@ -33,7 +33,7 @@ async def send_forgot_password_mail(email: str, token: str):
     data = {
         'from': 'FastSurvey <noreply@admin.fastsurvey.io>',
         'to': email,
-        'subject': 'Please verify your FastSurvey account',
+        'subject': 'Restore your FastSurvey password',
         'html': forgot_password_email_html(token),
         'o:testmode': ENVIRONMENT == 'testing'
     }

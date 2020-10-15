@@ -122,7 +122,7 @@ async def forgot_password(email: str):
     except AssertionError:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"verification could not be sent",
+            detail=f"email could not be sent",
         )
 
     return {"status": "success"}
@@ -149,6 +149,6 @@ async def restore_forgotten_password(forgot_password_token, new_password):
     await account_collection.update_one(
         {"forgot_password_token": forgot_password_token},
         {'$set': {'hashed_password': generate_password_hash(new_password)},
-         '$unset': 'forgot_password_token'}
+         '$unset': {'forgot_password_token': 1}}
     )
     return {"status": "success"}

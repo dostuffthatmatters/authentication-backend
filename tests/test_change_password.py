@@ -31,7 +31,7 @@ def account(account_collection):
     )
 
 
-def test_login(client, account_collection):
+def test_change_password(client, account_collection):
     # Login with not-registered account
     login(client, TEST_ACCOUNT, 401)
 
