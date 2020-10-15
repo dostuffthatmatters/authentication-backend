@@ -27,3 +27,8 @@ def generate_verification_email_html(db_account):
         '<p><br/>If you have not signed up for this ' +
         'service, you can just ignore this email.</p>'
     )
+
+
+async def send_forgot_password_mail(email: str, token: str):
+    "to be implemented"
+    pass

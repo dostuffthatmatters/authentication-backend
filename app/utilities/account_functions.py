@@ -6,7 +6,8 @@ from app import account_collection
 
 from app.utilities.encryption import generate_password_hash, \
     check_password_hash, generate_secret_token, validate_password_format
-from app.utilities.mailing import send_verification_mail
+from app.utilities.mailing import \
+    send_verification_mail, send_forgot_password_mail
 
 
 async def get_account(email: str):
@@ -50,7 +51,7 @@ async def create_account(email: str, password: str):
         await account_collection.delete_one({"email": email})
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"verification could not be sent",
+            detail=f"verification email could not be sent",
         )
 
     return {
@@ -101,5 +102,27 @@ async def change_password(account, old_password, new_password):
         {"email": account["email"]},
         {"$set": {"hashed_password": generate_password_hash(new_password)}}
     )
+
+    return {"status": "success"}
+
+
+async def forgot_password(email: str):
+
+    token = generate_secret_token(length=32)
+
+    account_collection.update_one(
+        {"email": email},
+        {"$set": {
+            "forgot_password_token": token,
+        }}
+    )
+
+    try:
+        await send_forgot_password_mail(email, token)
+    except AssertionError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"verification could not be sent",
+        )
 
     return {"status": "success"}
