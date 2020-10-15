@@ -9,7 +9,8 @@ from app import app, ACCESS_TOKEN_EXPIRE_MINUTES, ENVIRONMENT
 from app.utilities.authentication import \
     authenticate_from_login, authenticate_from_token
 from app.utilities.account_functions import \
-    create_account, verify_account, change_password
+    create_account, verify_account, change_password, \
+    forgot_password, restore_forgotten_password
 
 
 class Token(BaseModel):
@@ -73,3 +74,18 @@ async def change_password_route(
 ):
     account = await authenticate_from_token(access_token)
     return await change_password(account, old_password, new_password)
+
+
+@app.post('/forgot-password')
+async def change_password_route(
+    email: str = Form(...)
+):
+    return await forgot_password(email)
+
+
+@app.post('/restore-forgotten-password')
+async def change_password_route(
+    forgot_password_token: str = Form(...),
+    new_password: str = Form(...)
+):
+    return await restore_forgotten_password(forgot_password_token, new_password)

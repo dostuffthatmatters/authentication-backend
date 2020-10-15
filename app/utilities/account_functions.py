@@ -126,3 +126,29 @@ async def forgot_password(email: str):
         )
 
     return {"status": "success"}
+
+
+async def restore_forgotten_password(forgot_password_token, new_password):
+
+    if not validate_password_format(new_password):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="new_password format invalid",
+        )
+
+    account = await account_collection.find_one(
+        {"forgot_password_token": forgot_password_token}
+    )
+
+    if account is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="forgot_password_token invalid",
+        )
+
+    await account_collection.update_one(
+        {"forgot_password_token": forgot_password_token},
+        {'$set': {'hashed_password': generate_password_hash(new_password)},
+         '$unset': 'forgot_password_token'}
+    )
+    return {"status": "success"}
