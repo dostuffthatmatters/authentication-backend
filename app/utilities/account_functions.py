@@ -110,7 +110,7 @@ async def forgot_password(email: str):
 
     token = generate_secret_token(length=32)
 
-    account_collection.update_one(
+    await account_collection.update_one(
         {"email": email},
         {"$set": {
             "forgot_password_token": token,
