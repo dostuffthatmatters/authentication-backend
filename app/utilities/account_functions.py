@@ -117,13 +117,9 @@ async def forgot_password(email: str):
         }}
     )
 
-    try:
-        await send_forgot_password_mail(email, token)
-    except AssertionError:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"email could not be sent",
-        )
+    # 500 Error if mail cannot be sent
+    # 400 not possible since the email should be valid
+    await send_forgot_password_mail(email, token)
 
     return {"status": "success"}
 
