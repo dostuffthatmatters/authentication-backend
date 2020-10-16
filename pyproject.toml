@@ -16,11 +16,11 @@ passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 python-multipart = "^0.0.5"
 dnspython = "^2.0.0"
 requests = "^2.24.0"
-pytest-cov = "^2.10.1"
 httpx = "^0.16.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^4.6"
+pytest-cov = "^2.10.1"
 autopep8 = "^1.5.4"
 pymongo = "^3.11.0"
 
