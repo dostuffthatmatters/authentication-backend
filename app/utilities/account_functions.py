@@ -6,16 +6,14 @@ from app import account_collection
 
 from app.utilities.encryption import generate_password_hash, \
     check_password_hash, generate_secret_token, validate_password_format
-from app.utilities.mailing import send_verification_mail
+from app.utilities.mailing import \
+    send_verification_mail, send_forgot_password_mail
 
 
 async def get_account(email: str):
-    account = await account_collection.find_one({"email": email})
-    # I don't wall all data in the database to be part of the returned model!
-    return {
-        'email': account["email"],
-        "email_verified": account["email_verified"]
-    }
+    return await account_collection.find_one(
+        {"email": email}, {"_id": 0, "email": 1, "email_verified": 1}
+    )
 
 
 async def create_account(email: str, password: str):
@@ -50,7 +48,7 @@ async def create_account(email: str, password: str):
         await account_collection.delete_one({"email": email})
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"verification could not be sent",
+            detail=f"verification email could not be sent",
         )
 
     return {
@@ -61,7 +59,10 @@ async def create_account(email: str, password: str):
 
 async def verify_account(email_token: str, password: str):
     try:
-        account = await account_collection.find_one({"email_token": email_token})
+        account = await account_collection.find_one(
+            {"email_token": email_token},
+            {"_id": 0, "hashed_password": 1}
+        )
         assert(account is not None)
         assert(check_password_hash(password, account["hashed_password"]))
         await account_collection.update_one(
@@ -89,7 +90,10 @@ async def change_password(account, old_password, new_password):
             detail="new_password format invalid",
         )
 
-    db_account = await account_collection.find_one({"email": account["email"]})
+    db_account = await account_collection.find_one(
+        {"email": account["email"]},
+        {"_id": 0, "hashed_password": 1}
+    )
 
     if not check_password_hash(old_password, db_account["hashed_password"]):
         raise HTTPException(
@@ -102,4 +106,49 @@ async def change_password(account, old_password, new_password):
         {"$set": {"hashed_password": generate_password_hash(new_password)}}
     )
 
+    return {"status": "success"}
+
+
+async def forgot_password(email: str):
+
+    token = generate_secret_token(length=32)
+
+    await account_collection.update_one(
+        {"email": email},
+        {"$set": {
+            "forgot_password_token": token,
+        }}
+    )
+
+    # 500 Error if mail cannot be sent
+    # 400 not possible since the email should be valid
+    await send_forgot_password_mail(email, token)
+
+    return {"status": "success"}
+
+
+async def restore_forgotten_password(forgot_password_token, new_password):
+
+    if not validate_password_format(new_password):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="new_password format invalid",
+        )
+
+    account = await account_collection.find_one(
+        {"forgot_password_token": forgot_password_token},
+        {"_id": 0}
+    )
+
+    if account is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="forgot_password_token invalid",
+        )
+
+    await account_collection.update_one(
+        {"forgot_password_token": forgot_password_token},
+        {'$set': {'hashed_password': generate_password_hash(new_password)},
+         '$unset': {'forgot_password_token': 1}}
+    )
     return {"status": "success"}
