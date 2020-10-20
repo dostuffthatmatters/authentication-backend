@@ -5,11 +5,11 @@ description = "Authentication API built by FastSurvey"
 authors = ["Moritz Makowski <moritz@dostuffthatmatters.dev>"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.7"
 fastapi = "^0.61.1"
 motor = "^2.3.0"
+pymongo = "^3.11.0"
 uvicorn = "^0.12.1"
-python-dotenv = "^0.14.0"
 certifi = "^2020.6.20"
 python-jose = {extras = ["cryptography"], version = "^3.2.0"}
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
@@ -22,7 +22,7 @@ httpx = "^0.16.1"
 pytest = "^4.6"
 pytest-cov = "^2.10.1"
 autopep8 = "^1.5.4"
-pymongo = "^3.11.0"
+python-dotenv = "^0.14.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

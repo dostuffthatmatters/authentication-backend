@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from fastapi import Depends, FastAPI, HTTPException, status, Form
 from datetime import datetime, timedelta
 
-from app import app, ACCESS_TOKEN_EXPIRE_MINUTES, ENVIRONMENT
+from app import app, ENVIRONMENT
 
 from app.utilities.authentication import \
     authenticate_from_login, authenticate_from_token

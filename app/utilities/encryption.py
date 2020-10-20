@@ -3,17 +3,19 @@ import hashlib
 import secrets
 from datetime import datetime, timedelta
 from jose import jwt
+import os
 
-from app import PASSWORD_SALT, ACCESS_TOKEN_EXPIRE_MINUTES, \
-    SECRET_KEY, HASH_ALGORITHM, pwd_context
+from app import pwd_context
 
 
 def check_password_hash(plain_password: str, hashed_password: str):
-    return pwd_context.verify(plain_password + PASSWORD_SALT, hashed_password)
+    return pwd_context.verify(
+        plain_password + os.getenv('PASSWORD_SALT'), hashed_password
+    )
 
 
 def generate_password_hash(password: str):
-    return pwd_context.hash(password + PASSWORD_SALT)
+    return pwd_context.hash(password + os.getenv('PASSWORD_SALT'))
 
 
 def generate_secret_token(length=32):
@@ -21,10 +23,17 @@ def generate_secret_token(length=32):
 
 
 def create_access_token(account):
-    to_encode = {"email": account["email"], "email_verified": account["email_verified"]}
-    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=HASH_ALGORITHM)
+    to_encode = {
+        "email": account["email"],
+        "email_verified": account["email_verified"],
+        "exp": datetime.utcnow() + timedelta(
+            minutes=int(os.getenv('ACCESS_TOKEN_EXPIRE_MINUTES'))
+        )
+    }
+    encoded_jwt = jwt.encode(
+        to_encode, os.getenv('SECRET_KEY'),
+        algorithm=os.getenv('HASH_ALGORITHM')
+    )
     return encoded_jwt
 
 

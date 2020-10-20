@@ -1,11 +1,11 @@
 
+import os
 from typing import Optional
 from datetime import datetime, timedelta
 from fastapi import HTTPException, status, Form
 from jose import jwt, JWTError
 
-from app import ACCESS_TOKEN_EXPIRE_MINUTES, \
-    SECRET_KEY, HASH_ALGORITHM, account_collection
+from app import account_collection
 
 from app.utilities.encryption import \
     create_access_token, check_password_hash
@@ -32,7 +32,11 @@ def authenticate_from_token(
     access_token: str = Form(...)
 ):
     try:
-        payload = jwt.decode(access_token, SECRET_KEY, algorithms=[HASH_ALGORITHM])
+        payload = jwt.decode(
+            access_token, os.getenv('SECRET_KEY'),
+            algorithms=[os.getenv('HASH_ALGORITHM')]
+        )
+        # TODO: Check payload["exp"] = if token has expired
         email: str = payload.get("email")
         assert(email is not None)
         account = get_account(email=email)
