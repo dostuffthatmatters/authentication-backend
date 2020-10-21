@@ -28,7 +28,7 @@ def generate_access_token(account):
         "email": account["email"],
         "email_verified": account["email_verified"],
         "exp": datetime.utcnow() + timedelta(
-            minutes=int(os.getenv('ACCESS_TOKEN_EXPIRE_MINUTES'))
+            seconds=int(os.getenv('ACCESS_TOKEN_LIFETIME'))
         )
     }
     encoded_jwt = jwt.encode(
@@ -42,7 +42,7 @@ def generate_refresh_token(account):
     to_encode = {
         "email": account["email"],
         "exp": datetime.utcnow() + timedelta(
-            minutes=int(os.getenv('REFRESH_TOKEN_EXPIRE_MINUTES'))
+            seconds=int(os.getenv('REFRESH_TOKEN_LIFETIME'))
         )
     }
     encoded_jwt = jwt.encode(

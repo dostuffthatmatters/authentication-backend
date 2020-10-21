@@ -20,9 +20,9 @@ def client():
 
 @pytest.fixture(scope="module")
 def account_collection():
-    assert(os.getenv("MONGO_DB_CONNECTION_STRING") is not None)
+    assert(os.getenv("DB_CONNECTION_STRING") is not None)
     from pymongo import MongoClient
-    client = MongoClient(os.getenv("MONGO_DB_CONNECTION_STRING"))
+    client = MongoClient(os.getenv("DB_CONNECTION_STRING"))
     return client["testing"]['authentication']
 
 
