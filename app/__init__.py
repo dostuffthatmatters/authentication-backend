@@ -33,8 +33,8 @@ assert(os.getenv('REFRESH_TOKEN_LIFETIME').isnumeric)
 if None in [os.getenv("PRIVATE_KEY"), os.getenv("PUBLIC_KEY")]:
     assert("jwt-key" in os.listdir("."))
     assert("jwt-key.pub" in os.listdir("."))
-    PRIVATE_KEY = open('jwt-key').read()
-    PUBLIC_KEY = open('jwt-key.pub').read()
+    PRIVATE_KEY = open('jwtRS256.key').read()
+    PUBLIC_KEY = open('jwtRS256.key.pub').read()
 else:
     PRIVATE_KEY = os.getenv("PRIVATE_KEY")
     PUBLIC_KEY = os.getenv("PUBLIC_KEY")

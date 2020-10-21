@@ -2,11 +2,11 @@
 import hashlib
 import secrets
 from datetime import datetime, timedelta
-from jose import jwt, JWTError
+import jwt
 import os
 from fastapi import HTTPException, status
 
-from app import pwd_context
+from app import pwd_context, PRIVATE_KEY, PUBLIC_KEY
 
 
 def check_password_hash(plain_password: str, hashed_password: str):
@@ -45,17 +45,16 @@ def generate_jwt(account, token_lifetime):
             seconds=token_lifetime
         )
     }
-    encoded_jwt = jwt.encode(
-        to_encode, os.getenv('SECRET_KEY'),
+    return jwt.encode(
+        to_encode, PRIVATE_KEY,
         algorithm=os.getenv('HASH_ALGORITHM')
-    )
-    return encoded_jwt
+    ).decode('utf-8')
 
 
 def check_jwt(token):
     try:
         payload = jwt.decode(
-            token, os.getenv('SECRET_KEY'),
+            token, PUBLIC_KEY,
             algorithms=[os.getenv('HASH_ALGORITHM')]
         )
         assert("exp" in payload)
@@ -65,7 +64,7 @@ def check_jwt(token):
                 detail="Token expired"
             )
         return payload
-    except (AssertionError, JWTError):
+    except (AssertionError, Exception):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials"

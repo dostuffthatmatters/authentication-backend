@@ -20,8 +20,8 @@ def test_login(client):
 
     # Check whether response has the right format
     content_dict = get_content_dict(response)
-    assert(all([key in content_dict for key in ["access_token", "token_type"]]))
-    assert(64 < len(content_dict["access_token"]) < 256)
+    assert(all([key in content_dict for key in
+                ["access_token", "refresh_token", "token_type"]]))
     assert(content_dict["token_type"] == "bearer")
 
     # Try to get private data with invalid access_token
