@@ -5,7 +5,7 @@
 
 ## Intro
 
-The idea behind OAuth is
+... some storytelling coming soon!
 
 ## About
 
