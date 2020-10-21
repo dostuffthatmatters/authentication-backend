@@ -3,7 +3,7 @@ import os
 from typing import Optional
 from datetime import datetime, timedelta
 from fastapi import HTTPException, status, Form
-from jose import jwt, JWTError
+import jwt
 
 from app import account_collection
 
@@ -34,7 +34,7 @@ async def authenticate_from_access_token(access_token: str):
         account = await get_account(email=payload["email"])
         assert(account is not None)
         return account
-    except (AssertionError, JWTError):
+    except (AssertionError, Exception):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials"
@@ -47,7 +47,7 @@ async def authenticate_from_refresh_token(refresh_token: str):
         account = await get_account(email=payload["email"])
         assert(account is not None)
         return generate_oauth_token(account)
-    except (AssertionError, JWTError):
+    except (AssertionError, Exception):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials"
