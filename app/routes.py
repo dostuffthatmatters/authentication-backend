@@ -7,7 +7,8 @@ from datetime import datetime, timedelta
 from app import app, ENVIRONMENT, oauth2_scheme
 
 from app.utilities.authentication import \
-    authenticate_from_login, authenticate_from_token
+    authenticate_from_login, authenticate_from_access_token, \
+    authenticate_from_refresh_token
 from app.utilities.account_functions import \
     create_account, verify_account, change_password, \
     forgot_password, restore_forgotten_password
@@ -40,6 +41,13 @@ async def login_route(
     return await authenticate_from_login(email, password)
 
 
+@app.post("/refresh", response_model=Token)
+async def login_route(
+    refresh_token: str = Form(...)
+):
+    return await authenticate_from_refresh_token(refresh_token)
+
+
 @app.post('/register', response_model=Token)
 async def register_route(
     email: str = Form(...),
@@ -60,7 +68,7 @@ async def verify_route(
 async def account_route(
     access_token: str = Depends(oauth2_scheme)
 ):
-    return await authenticate_from_token(access_token)
+    return await authenticate_from_access_token(access_token)
 
 
 @app.post('/change-password')
@@ -69,7 +77,7 @@ async def change_password_route(
     old_password: str = Form(...),
     new_password: str = Form(...)
 ):
-    account = await authenticate_from_token(access_token)
+    account = await authenticate_from_access_token(access_token)
     return await change_password(account, old_password, new_password)
 
 

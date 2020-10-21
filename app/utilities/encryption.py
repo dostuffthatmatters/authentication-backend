@@ -52,7 +52,7 @@ def generate_refresh_token(account):
     return encoded_jwt
 
 
-def check_access_token(access_token):
+def check_token(access_token):
     try:
         payload = jwt.decode(
             access_token, os.getenv('SECRET_KEY'),

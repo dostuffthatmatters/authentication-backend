@@ -7,7 +7,8 @@ from jose import jwt, JWTError
 
 from app import account_collection
 
-from app.utilities.encryption import check_access_token, check_password_hash, generate_access_token, generate_refresh_token
+from app.utilities.encryption import check_token, check_password_hash, \
+    generate_access_token, generate_refresh_token
 from app.utilities.account_functions import get_account
 
 
@@ -31,12 +32,25 @@ async def authenticate_from_login(
         )
 
 
-def authenticate_from_token(access_token: str):
+def authenticate_from_access_token(access_token: str):
     try:
-        payload = check_access_token(access_token)
+        payload = check_token(access_token)
         account = get_account(email=payload["email"])
         assert(account is not None)
         return account
+    except (AssertionError, JWTError):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials"
+        )
+
+
+def authenticate_from_refresh_token(refresh_token: str):
+    try:
+        payload = check_token(refresh_token)
+        account = get_account(email=payload["email"])
+        assert(account is not None)
+        return generate_access_token(account)
     except (AssertionError, JWTError):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
