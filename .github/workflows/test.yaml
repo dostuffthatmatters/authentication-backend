@@ -21,7 +21,7 @@ jobs:
               run: poetry run pytest --cov=app --cov-report=term-missing --cov-report=xml tests
               env:
                   ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
-                  DB_CONNECTION_STRING: ${{ secrets.MONGO_DB_CONNECTION_STRING }}
+                  DB_CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
                   SECRET_KEY: ${{ secrets.SECRET_KEY }}
                   PASSWORD_SALT: ${{ secrets.PASSWORD_SALT }}
                   HASH_ALGORITHM: ${{ secrets.HASH_ALGORITHM }}
