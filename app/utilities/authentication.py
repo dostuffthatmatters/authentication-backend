@@ -7,8 +7,7 @@ from jose import jwt, JWTError
 
 from app import account_collection
 
-from app.utilities.encryption import \
-    create_access_token, check_password_hash
+from app.utilities.encryption import generate_access_token, check_access_token, check_password_hash
 from app.utilities.account_functions import get_account
 
 
@@ -20,7 +19,7 @@ async def authenticate_from_login(
         account = await account_collection.find_one({"email": email})
         assert(account is not None)
         assert(check_password_hash(password, account["hashed_password"]))
-        return create_access_token(account)
+        return generate_access_token(account)
     except AssertionError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -28,18 +27,10 @@ async def authenticate_from_login(
         )
 
 
-def authenticate_from_token(
-    access_token: str = Form(...)
-):
+def authenticate_from_token(access_token: str):
     try:
-        payload = jwt.decode(
-            access_token, os.getenv('SECRET_KEY'),
-            algorithms=[os.getenv('HASH_ALGORITHM')]
-        )
-        # TODO: Check payload["exp"] = if token has expired
-        email: str = payload.get("email")
-        assert(email is not None)
-        account = get_account(email=email)
+        payload = check_access_token(access_token)
+        account = get_account(email=payload["email"])
         assert(account is not None)
         return account
     except (AssertionError, JWTError):
