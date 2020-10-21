@@ -10,8 +10,6 @@ MODIFIED_TEST_ACCOUNT = {"email": "f" + TEST_EMAIL_DOMAIN, "password": "123456a!
 def login(client, data, status_code):
     response = client.post("/login", data=data)
     assert(response.status_code == status_code)
-    if status_code == 200:
-        return get_content_dict(response)["access_token"]
 
 
 def restore_forgotten_password(

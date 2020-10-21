@@ -4,6 +4,7 @@ import os
 import httpx
 import certifi
 from fastapi import FastAPI
+from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from pymongo import MongoClient
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -36,6 +37,7 @@ AUTH_BACKEND_URL = os.getenv('AUTH_BACKEND_URL')
 app = FastAPI()
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 # Using the synchronous MongoClient during setup for
 # for index-creation and testing

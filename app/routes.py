@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from fastapi import Depends, FastAPI, HTTPException, status, Form
 from datetime import datetime, timedelta
 
-from app import app, ENVIRONMENT
+from app import app, ENVIRONMENT, oauth2_scheme
 
 from app.utilities.authentication import \
     authenticate_from_login, authenticate_from_token
@@ -56,19 +56,16 @@ async def verify_route(
     return await verify_account(email_token, password)
 
 
-# POST and not a GET request because a GET request:
-# 1. might get cached
-# 2. does not have a body (no TLS encryption on the token)
-@app.post("/account", response_model=Account)
+@app.get("/account", response_model=Account)
 async def account_route(
-    access_token: str = Form(...)
+    access_token: str = Depends(oauth2_scheme)
 ):
     return await authenticate_from_token(access_token)
 
 
 @app.post('/change-password')
 async def change_password_route(
-    access_token: str = Form(...),
+    access_token: str = Depends(oauth2_scheme),
     old_password: str = Form(...),
     new_password: str = Form(...)
 ):

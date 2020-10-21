@@ -25,14 +25,14 @@ def test_login(client):
     assert(content_dict["token_type"] == "bearer")
 
     # Try to get private data with invalid access_token
-    response = client.post("/account", data={
-        "access_token": "123"
+    response = client.get("/account", headers={
+        "Authorization": "bearer 123"
     })
     assert(response.status_code == 401)
 
     # Try to get private data with valid access_token
-    response = client.post("/account", data={
-        "access_token": content_dict["access_token"]
+    response = client.get("/account", headers={
+        "Authorization": "bearer " + content_dict["access_token"]
     })
     assert(response.status_code == 200)
     content_dict = get_content_dict(response)

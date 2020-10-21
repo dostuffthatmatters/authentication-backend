@@ -18,10 +18,9 @@ def change_password(
     client, access_token, old_password, new_password, status_code
 ):
     response = client.post("/change-password", data={
-        "access_token": access_token,
         "old_password": old_password,
         "new_password": new_password,
-    })
+    }, headers={"Authorization": "Bearer " + access_token})
     assert(response.status_code == status_code)
 
 
