@@ -63,3 +63,40 @@ docker build -t docker-image .
 # Set all required env variables here
 docker run -d -p 8080:8080 --env-file .env docker-image
 ```
+
+## Implementing a resource server
+
+On any resource server you need to install:
+
+```
+PyJWT = {extras = ["cryptography"], version = "^1.7.1"}
+```
+
+... with ...
+
+```
+pip install "PyJWT[cryptography]"
+```
+
+The public key can be fetched from the associated authentication server.
+
+```python
+def check_jwt(token):
+    try:
+        payload = jwt.decode(
+            token, PUBLIC_KEY,
+            algorithms=["RS256"]
+        )
+        assert("exp" in payload)
+        if payload["exp"] < datetime.timestamp(datetime.utcnow()):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Token expired"
+            )
+        return payload
+    except (AssertionError, Exception):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials"
+        )
+```
