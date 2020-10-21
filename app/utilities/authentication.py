@@ -7,8 +7,8 @@ from jose import jwt, JWTError
 
 from app import account_collection
 
-from app.utilities.encryption import check_token, check_password_hash, \
-    generate_access_token, generate_refresh_token
+from app.utilities.encryption import \
+    generate_jwt, check_jwt, check_password_hash
 from app.utilities.account_functions import get_account
 
 
@@ -21,8 +21,12 @@ async def authenticate_from_login(
         assert(account is not None)
         assert(check_password_hash(password, account["hashed_password"]))
         return {
-            "access_token": generate_access_token(account),
-            "refresh_token": generate_refresh_token(account),
+            "access_token": generate_jwt(
+                account, int(os.getenv('ACCESS_TOKEN_LIFETIME'))
+            ),
+            "refresh_token": generate_jwt(
+                account, int(os.getenv('ACCESS_TOKEN_LIFETIME'))
+            ),
             "token_type": "bearer"
         }
     except AssertionError:
@@ -32,10 +36,10 @@ async def authenticate_from_login(
         )
 
 
-def authenticate_from_access_token(access_token: str):
+async def authenticate_from_access_token(access_token: str):
     try:
-        payload = check_token(access_token)
-        account = get_account(email=payload["email"])
+        payload = check_jwt(access_token)
+        account = await get_account(email=payload["email"])
         assert(account is not None)
         return account
     except (AssertionError, JWTError):
@@ -45,12 +49,20 @@ def authenticate_from_access_token(access_token: str):
         )
 
 
-def authenticate_from_refresh_token(refresh_token: str):
+async def authenticate_from_refresh_token(refresh_token: str):
     try:
-        payload = check_token(refresh_token)
-        account = get_account(email=payload["email"])
+        payload = check_jwt(refresh_token)
+        account = await get_account(email=payload["email"])
         assert(account is not None)
-        return generate_access_token(account)
+        return {
+            "access_token": generate_jwt(
+                account, int(os.getenv('ACCESS_TOKEN_LIFETIME'))
+            ),
+            "refresh_token": generate_jwt(
+                account, int(os.getenv('REFRESH_TOKEN_LIFETIME'))
+            ),
+            "token_type": "bearer"
+        }
     except (AssertionError, JWTError):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

@@ -23,12 +23,12 @@ def generate_secret_token(length=32):
     return secrets.token_hex(length)
 
 
-def generate_access_token(account):
+def generate_jwt(account, token_lifetime):
     to_encode = {
         "email": account["email"],
         "email_verified": account["email_verified"],
         "exp": datetime.utcnow() + timedelta(
-            seconds=int(os.getenv('ACCESS_TOKEN_LIFETIME'))
+            seconds=token_lifetime
         )
     }
     encoded_jwt = jwt.encode(
@@ -38,24 +38,10 @@ def generate_access_token(account):
     return encoded_jwt
 
 
-def generate_refresh_token(account):
-    to_encode = {
-        "email": account["email"],
-        "exp": datetime.utcnow() + timedelta(
-            seconds=int(os.getenv('REFRESH_TOKEN_LIFETIME'))
-        )
-    }
-    encoded_jwt = jwt.encode(
-        to_encode, os.getenv('SECRET_KEY'),
-        algorithm=os.getenv('HASH_ALGORITHM')
-    )
-    return encoded_jwt
-
-
-def check_token(access_token):
+def check_jwt(token):
     try:
         payload = jwt.decode(
-            access_token, os.getenv('SECRET_KEY'),
+            token, os.getenv('SECRET_KEY'),
             algorithms=[os.getenv('HASH_ALGORITHM')]
         )
         assert("exp" in payload)
