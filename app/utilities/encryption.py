@@ -23,6 +23,20 @@ def generate_secret_token(length=32):
     return secrets.token_hex(length)
 
 
+def generate_oauth_token(account):
+    return {
+        "access_token": generate_jwt(
+            {"email": account["email"], "email_verified": False},
+            int(os.getenv('ACCESS_TOKEN_LIFETIME'))
+        ),
+        "refresh_token": generate_jwt(
+            {"email": account["email"], "email_verified": False},
+            int(os.getenv('REFRESH_TOKEN_LIFETIME'))
+        ),
+        "token_type": "bearer"
+    }
+
+
 def generate_jwt(account, token_lifetime):
     to_encode = {
         "email": account["email"],
