@@ -3,6 +3,7 @@ import time
 import os
 import httpx
 import certifi
+import jwt
 from fastapi import FastAPI
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
@@ -31,13 +32,25 @@ assert(os.getenv('ACCESS_TOKEN_LIFETIME').isnumeric)
 assert(os.getenv('REFRESH_TOKEN_LIFETIME').isnumeric)
 
 if None in [os.getenv("PRIVATE_KEY"), os.getenv("PUBLIC_KEY")]:
-    assert("jwt-key" in os.listdir("."))
-    assert("jwt-key.pub" in os.listdir("."))
+    assert("jwtRS256.key" in os.listdir("."))
+    assert("jwtRS256.key.pub" in os.listdir("."))
     PRIVATE_KEY = open('jwtRS256.key').read()
     PUBLIC_KEY = open('jwtRS256.key.pub').read()
 else:
     PRIVATE_KEY = os.getenv("PRIVATE_KEY")
     PUBLIC_KEY = os.getenv("PUBLIC_KEY")
+
+# Self Check
+token = jwt.encode(
+    {"some": "data"}, PRIVATE_KEY,
+    algorithm=os.getenv("HASH_ALGORITHM")
+)
+plain = jwt.decode(
+    token, PUBLIC_KEY,
+    algorithms=os.getenv("HASH_ALGORITHM")
+)
+assert(plain == {"some": "data"})
+
 
 # Set all environment variables
 ENVIRONMENT = os.getenv('ENVIRONMENT')

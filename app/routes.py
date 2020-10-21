@@ -28,7 +28,7 @@ class Account(BaseModel):
 @app.get('/')
 def index_route():
     return {
-        "status": "running",
+        "status": "healthy",
         "mode": ENVIRONMENT,
         "public_key": PUBLIC_KEY
     }
