@@ -1,5 +1,6 @@
 scripts/*
-!scripts/test.sh
+jwt-key
+jwt-key.pub
 
 # Created by https://www.toptal.com/developers/gitignore/api/macos,python,visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,python,visualstudiocode

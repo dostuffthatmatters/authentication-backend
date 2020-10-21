@@ -3,6 +3,8 @@
 
 # Authentication API
 
+## Intro
+
 We actually wanted to use an OAuth2 authentication service rather than build these features ourselves - yet again.
 
 However most of the tools we have stumbled accross had on or more of the following issues:
@@ -14,4 +16,42 @@ However most of the tools we have stumbled accross had on or more of the followi
 
 That is why we are reinventing the wheel yet again :)
 
-Feel free to reuse it in your project if you also don't want to copy and paste the same functionality with every new project.
+<br/>
+
+## Usage
+
+1. Inside your desired python environment run:
+
+```bash
+pip install poetry
+poetry install
+```
+
+2. Generate a private/public-keypair with:
+
+```bash
+ssh-keygen -t rsa -b 4096
+```
+
+3. Run all tests with coverage report with:
+
+```bash
+pytest --cov=app --cov-report=term-missing --cov-report=xml ./tests
+```
+
+4. Run the app (without Docker)
+
+```bash
+uvicorn app:app --host 0.0.0.0 --port 8080
+```
+
+... or with Docker:
+
+```bash
+docker build -t docker-image .
+
+docker run -d -p 8080:8080 \
+    -e ENVIRONMENT='...' \
+    -e ...
+    docker-image
+```
