@@ -2,7 +2,7 @@
 name = "atomicwrites"
 version = "1.4.0"
 description = "Atomic file writes."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
@@ -10,7 +10,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 name = "attrs"
 version = "20.2.0"
 description = "Classes Without Boilerplate"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
@@ -85,9 +85,9 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "colorama"
-version = "0.4.3"
+version = "0.4.4"
 description = "Cross-platform colored terminal text."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
@@ -95,7 +95,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 name = "coverage"
 version = "5.3"
 description = "Code coverage measurement for Python"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4"
 
@@ -135,17 +135,6 @@ doh = ["requests", "requests-toolbelt"]
 idna = ["idna (>=2.1)"]
 curio = ["curio (>=1.2)", "sniffio (>=1.1)"]
 trio = ["trio (>=0.14.0)", "sniffio (>=1.1)"]
-
-[[package]]
-name = "ecdsa"
-version = "0.14.1"
-description = "ECDSA cryptographic signature library (pure python)"
-category = "main"
-optional = false
-python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
-
-[package.dependencies]
-six = "*"
 
 [[package]]
 name = "fastapi"
@@ -215,10 +204,25 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [[package]]
+name = "importlib-metadata"
+version = "2.0.0"
+description = "Read metadata from Python packages"
+category = "dev"
+optional = false
+python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
+
+[package.dependencies]
+zipp = ">=0.5"
+
+[package.extras]
+docs = ["sphinx", "rst.linker"]
+testing = ["packaging", "pep517", "importlib-resources (>=1.3)"]
+
+[[package]]
 name = "more-itertools"
 version = "8.5.0"
 description = "More routines for operating on iterables, beyond itertools"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.5"
 
@@ -237,7 +241,7 @@ pymongo = ">=3.11,<4"
 name = "packaging"
 version = "20.4"
 description = "Core utilities for Python packages"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
@@ -266,9 +270,12 @@ totp = ["cryptography"]
 name = "pluggy"
 version = "0.13.1"
 description = "plugin and hook calling mechanisms for python"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+
+[package.dependencies]
+importlib-metadata = {version = ">=0.12", markers = "python_version < \"3.8\""}
 
 [package.extras]
 dev = ["pre-commit", "tox"]
@@ -277,17 +284,9 @@ dev = ["pre-commit", "tox"]
 name = "py"
 version = "1.9.0"
 description = "library with cross-python path, ini-parsing, io, code, log facilities"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
-
-[[package]]
-name = "pyasn1"
-version = "0.4.8"
-description = "ASN.1 types and codecs"
-category = "main"
-optional = false
-python-versions = "*"
 
 [[package]]
 name = "pycodestyle"
@@ -319,6 +318,19 @@ email = ["email-validator (>=1.0.3)"]
 typing_extensions = ["typing-extensions (>=3.7.2)"]
 
 [[package]]
+name = "pyjwt"
+version = "1.7.1"
+description = "JSON Web Token implementation in Python"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.extras]
+crypto = ["cryptography (>=1.4)"]
+flake8 = ["flake8", "flake8-import-order", "pep8-naming"]
+test = ["pytest (>=4.0.1,<5.0.0)", "pytest-cov (>=2.6.0,<3.0.0)", "pytest-runner (>=4.2,<5.0.0)"]
+
+[[package]]
 name = "pymongo"
 version = "3.11.0"
 description = "Python driver for MongoDB <http://www.mongodb.org>"
@@ -340,7 +352,7 @@ zstd = ["zstandard"]
 name = "pyparsing"
 version = "2.4.7"
 description = "Python parsing module"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 
@@ -348,7 +360,7 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 name = "pytest"
 version = "4.6.11"
 description = "pytest: simple powerful testing with Python"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,>=2.7"
 
@@ -356,6 +368,7 @@ python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,>=2.7"
 atomicwrites = ">=1.0"
 attrs = ">=17.4.0"
 colorama = {version = "*", markers = "sys_platform == \"win32\" and python_version != \"3.4\""}
+importlib-metadata = {version = ">=0.12", markers = "python_version < \"3.8\""}
 more-itertools = {version = ">=4.0.0", markers = "python_version > \"2.7\""}
 packaging = "*"
 pluggy = ">=0.12,<1.0"
@@ -370,7 +383,7 @@ testing = ["argcomplete", "hypothesis (>=3.56)", "nose", "requests", "mock"]
 name = "pytest-cov"
 version = "2.10.1"
 description = "Pytest plugin for measuring coverage."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
@@ -385,32 +398,12 @@ testing = ["fields", "hunter", "process-tests (2.0.2)", "six", "pytest-xdist", "
 name = "python-dotenv"
 version = "0.14.0"
 description = "Add .env support to your django/flask apps in development and deployments"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
 [package.extras]
 cli = ["click (>=5.0)"]
-
-[[package]]
-name = "python-jose"
-version = "3.2.0"
-description = "JOSE implementation in Python"
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-cryptography = {version = "*", optional = true, markers = "extra == \"cryptography\""}
-ecdsa = "<0.15"
-pyasn1 = "*"
-rsa = "*"
-six = "<2.0"
-
-[package.extras]
-cryptography = ["cryptography"]
-pycrypto = ["pycrypto (>=2.6.0,<2.7.0)", "pyasn1"]
-pycryptodome = ["pycryptodome (>=3.3.1,<4.0.0)", "pyasn1"]
 
 [[package]]
 name = "python-multipart"
@@ -456,17 +449,6 @@ idna = {version = "*", optional = true, markers = "extra == \"idna2008\""}
 idna2008 = ["idna"]
 
 [[package]]
-name = "rsa"
-version = "4.6"
-description = "Pure-Python RSA implementation"
-category = "main"
-optional = false
-python-versions = ">=3.5, <4"
-
-[package.dependencies]
-pyasn1 = ">=0.1.3"
-
-[[package]]
 name = "six"
 version = "1.15.0"
 description = "Python 2 and 3 compatibility utilities"
@@ -502,8 +484,16 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "typing-extensions"
+version = "3.7.4.3"
+description = "Backported and Experimental Type Hints for Python 3.5+"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "urllib3"
-version = "1.25.10"
+version = "1.25.11"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
 category = "main"
 optional = false
@@ -511,12 +501,12 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4"
 
 [package.extras]
 brotli = ["brotlipy (>=0.6.0)"]
-secure = ["certifi", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "pyOpenSSL (>=0.14)", "ipaddress"]
+secure = ["pyOpenSSL (>=0.14)", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "certifi", "ipaddress"]
 socks = ["PySocks (>=1.5.6,<1.5.7 || >1.5.7,<2.0)"]
 
 [[package]]
 name = "uvicorn"
-version = "0.12.1"
+version = "0.12.2"
 description = "The lightning-fast ASGI server."
 category = "main"
 optional = false
@@ -525,6 +515,7 @@ python-versions = "*"
 [package.dependencies]
 click = ">=7.0.0,<8.0.0"
 h11 = ">=0.8"
+typing-extensions = {version = "*", markers = "python_version < \"3.8\""}
 
 [package.extras]
 standard = ["websockets (>=8.0.0,<9.0.0)", "watchgod (>=0.6,<0.7)", "python-dotenv (>=0.13)", "PyYAML (>=5.1)", "httptools (>=0.1.0,<0.2.0)", "uvloop (>=0.14.0)", "colorama (>=0.4)"]
@@ -533,14 +524,26 @@ standard = ["websockets (>=8.0.0,<9.0.0)", "watchgod (>=0.6,<0.7)", "python-dote
 name = "wcwidth"
 version = "0.2.5"
 description = "Measures the displayed width of unicode strings in a terminal"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
+[[package]]
+name = "zipp"
+version = "3.3.1"
+description = "Backport of pathlib-compatible object wrapper for zip files"
+category = "dev"
+optional = false
+python-versions = ">=3.6"
+
+[package.extras]
+docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
+testing = ["pytest (>=3.5,<3.7.3 || >3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake8", "pytest-cov", "jaraco.test (>=3.2.0)", "jaraco.itertools", "func-timeout", "pytest-black (>=0.3.7)", "pytest-mypy"]
+
 [metadata]
 lock-version = "1.1"
-python-versions = "^3.8"
-content-hash = "4acea2864d8ab139ef268b5349dde0f8734eca1c0908b214b4328fc7c366e435"
+python-versions = "^3.7"
+content-hash = "8b7685007cecdef97be93a549346fcf118abfe86fc1864e0666095989db5343e"
 
 [metadata.files]
 atomicwrites = [
@@ -614,8 +617,8 @@ click = [
     {file = "click-7.1.2.tar.gz", hash = "sha256:d2b5255c7c6349bc1bd1e59e08cd12acbbd63ce649f2588755783aa94dfb6b1a"},
 ]
 colorama = [
-    {file = "colorama-0.4.3-py2.py3-none-any.whl", hash = "sha256:7d73d2a99753107a36ac6b455ee49046802e59d9d076ef8e47b61499fa29afff"},
-    {file = "colorama-0.4.3.tar.gz", hash = "sha256:e96da0d330793e2cb9485e9ddfd918d456036c7149416295932478192f4436a1"},
+    {file = "colorama-0.4.4-py2.py3-none-any.whl", hash = "sha256:9f47eda37229f68eee03b24b9748937c7dc3868f906e8ba69fbcbdd3bc5dc3e2"},
+    {file = "colorama-0.4.4.tar.gz", hash = "sha256:5941b2b48a20143d2267e95b1c2a7603ce057ee39fd88e7329b0c292aa16869b"},
 ]
 coverage = [
     {file = "coverage-5.3-cp27-cp27m-macosx_10_13_intel.whl", hash = "sha256:bd3166bb3b111e76a4f8e2980fa1addf2920a4ca9b2b8ca36a3bc3dedc618270"},
@@ -681,10 +684,6 @@ dnspython = [
     {file = "dnspython-2.0.0-py3-none-any.whl", hash = "sha256:40bb3c24b9d4ec12500f0124288a65df232a3aa749bb0c39734b782873a2544d"},
     {file = "dnspython-2.0.0.zip", hash = "sha256:044af09374469c3a39eeea1a146e8cac27daec951f1f1f157b1962fc7cb9d1b7"},
 ]
-ecdsa = [
-    {file = "ecdsa-0.14.1-py2.py3-none-any.whl", hash = "sha256:e108a5fe92c67639abae3260e43561af914e7fd0d27bae6d2ec1312ae7934dfe"},
-    {file = "ecdsa-0.14.1.tar.gz", hash = "sha256:64c613005f13efec6541bb0a33290d0d03c27abab5f15fbab20fb0ee162bdd8e"},
-]
 fastapi = [
     {file = "fastapi-0.61.1-py3-none-any.whl", hash = "sha256:6cc31bb555dd8ca956d1d227477d661e4ac012337242a41d36214ffbda78bfe9"},
     {file = "fastapi-0.61.1.tar.gz", hash = "sha256:61ed73b4304413a2ea618d1b95ea866ee386e0e62dd8659c4f5059286f4a39c2"},
@@ -704,6 +703,10 @@ httpx = [
 idna = [
     {file = "idna-2.10-py2.py3-none-any.whl", hash = "sha256:b97d804b1e9b523befed77c48dacec60e6dcb0b5391d57af6a65a312a90648c0"},
     {file = "idna-2.10.tar.gz", hash = "sha256:b307872f855b18632ce0c21c5e45be78c0ea7ae4c15c828c20788b26921eb3f6"},
+]
+importlib-metadata = [
+    {file = "importlib_metadata-2.0.0-py2.py3-none-any.whl", hash = "sha256:cefa1a2f919b866c5beb7c9f7b0ebb4061f30a8a9bf16d609b000e2dfaceb9c3"},
+    {file = "importlib_metadata-2.0.0.tar.gz", hash = "sha256:77a540690e24b0305878c37ffd421785a6f7e53c8b5720d211b211de8d0e95da"},
 ]
 more-itertools = [
     {file = "more-itertools-8.5.0.tar.gz", hash = "sha256:6f83822ae94818eae2612063a5101a7311e68ae8002005b5e05f03fd74a86a20"},
@@ -728,21 +731,6 @@ pluggy = [
 py = [
     {file = "py-1.9.0-py2.py3-none-any.whl", hash = "sha256:366389d1db726cd2fcfc79732e75410e5fe4d31db13692115529d34069a043c2"},
     {file = "py-1.9.0.tar.gz", hash = "sha256:9ca6883ce56b4e8da7e79ac18787889fa5206c79dcc67fb065376cd2fe03f342"},
-]
-pyasn1 = [
-    {file = "pyasn1-0.4.8-py2.4.egg", hash = "sha256:fec3e9d8e36808a28efb59b489e4528c10ad0f480e57dcc32b4de5c9d8c9fdf3"},
-    {file = "pyasn1-0.4.8-py2.5.egg", hash = "sha256:0458773cfe65b153891ac249bcf1b5f8f320b7c2ce462151f8fa74de8934becf"},
-    {file = "pyasn1-0.4.8-py2.6.egg", hash = "sha256:5c9414dcfede6e441f7e8f81b43b34e834731003427e5b09e4e00e3172a10f00"},
-    {file = "pyasn1-0.4.8-py2.7.egg", hash = "sha256:6e7545f1a61025a4e58bb336952c5061697da694db1cae97b116e9c46abcf7c8"},
-    {file = "pyasn1-0.4.8-py2.py3-none-any.whl", hash = "sha256:39c7e2ec30515947ff4e87fb6f456dfc6e84857d34be479c9d4a4ba4bf46aa5d"},
-    {file = "pyasn1-0.4.8-py3.1.egg", hash = "sha256:78fa6da68ed2727915c4767bb386ab32cdba863caa7dbe473eaae45f9959da86"},
-    {file = "pyasn1-0.4.8-py3.2.egg", hash = "sha256:08c3c53b75eaa48d71cf8c710312316392ed40899cb34710d092e96745a358b7"},
-    {file = "pyasn1-0.4.8-py3.3.egg", hash = "sha256:03840c999ba71680a131cfaee6fab142e1ed9bbd9c693e285cc6aca0d555e576"},
-    {file = "pyasn1-0.4.8-py3.4.egg", hash = "sha256:7ab8a544af125fb704feadb008c99a88805126fb525280b2270bb25cc1d78a12"},
-    {file = "pyasn1-0.4.8-py3.5.egg", hash = "sha256:e89bf84b5437b532b0803ba5c9a5e054d21fec423a89952a74f87fa2c9b7bce2"},
-    {file = "pyasn1-0.4.8-py3.6.egg", hash = "sha256:014c0e9976956a08139dc0712ae195324a75e142284d5f87f1a87ee1b068a359"},
-    {file = "pyasn1-0.4.8-py3.7.egg", hash = "sha256:99fcc3c8d804d1bc6d9a099921e39d827026409a58f2a720dcdb89374ea0c776"},
-    {file = "pyasn1-0.4.8.tar.gz", hash = "sha256:aef77c9fb94a3ac588e87841208bdec464471d9871bd5050a287cc9a475cd0ba"},
 ]
 pycodestyle = [
     {file = "pycodestyle-2.6.0-py2.py3-none-any.whl", hash = "sha256:2295e7b2f6b5bd100585ebcb1f616591b652db8a741695b3d8f5d28bdc934367"},
@@ -770,6 +758,10 @@ pydantic = [
     {file = "pydantic-1.6.1-cp38-cp38-win_amd64.whl", hash = "sha256:530d7222a2786a97bc59ee0e0ebbe23728f82974b1f1ad9a11cd966143410633"},
     {file = "pydantic-1.6.1-py36.py37.py38-none-any.whl", hash = "sha256:b5b3489cb303d0f41ad4a7390cf606a5f2c7a94dcba20c051cd1c653694cb14d"},
     {file = "pydantic-1.6.1.tar.gz", hash = "sha256:54122a8ed6b75fe1dd80797f8251ad2063ea348a03b77218d73ea9fe19bd4e73"},
+]
+pyjwt = [
+    {file = "PyJWT-1.7.1-py2.py3-none-any.whl", hash = "sha256:5c6eca3c2940464d106b99ba83b00c6add741c9becaec087fb7ccdefea71350e"},
+    {file = "PyJWT-1.7.1.tar.gz", hash = "sha256:8d59a976fb773f3e6a39c85636357c4f0e242707394cadadd9814f5cbaa20e96"},
 ]
 pymongo = [
     {file = "pymongo-3.11.0-cp27-cp27m-macosx_10_15_x86_64.whl", hash = "sha256:7a4a6f5b818988a3917ec4baa91d1143242bdfece8d38305020463955961266a"},
@@ -843,10 +835,6 @@ python-dotenv = [
     {file = "python-dotenv-0.14.0.tar.gz", hash = "sha256:8c10c99a1b25d9a68058a1ad6f90381a62ba68230ca93966882a4dbc3bc9c33d"},
     {file = "python_dotenv-0.14.0-py2.py3-none-any.whl", hash = "sha256:c10863aee750ad720f4f43436565e4c1698798d763b63234fb5021b6c616e423"},
 ]
-python-jose = [
-    {file = "python-jose-3.2.0.tar.gz", hash = "sha256:4e4192402e100b5fb09de5a8ea6bcc39c36ad4526341c123d401e2561720335b"},
-    {file = "python_jose-3.2.0-py2.py3-none-any.whl", hash = "sha256:67d7dfff599df676b04a996520d9be90d6cdb7e6dd10b4c7cacc0c3e2e92f2be"},
-]
 python-multipart = [
     {file = "python-multipart-0.0.5.tar.gz", hash = "sha256:f7bb5f611fc600d15fa47b3974c8aa16e93724513b49b5f95c81e6624c83fa43"},
 ]
@@ -857,10 +845,6 @@ requests = [
 rfc3986 = [
     {file = "rfc3986-1.4.0-py2.py3-none-any.whl", hash = "sha256:af9147e9aceda37c91a05f4deb128d4b4b49d6b199775fd2d2927768abdc8f50"},
     {file = "rfc3986-1.4.0.tar.gz", hash = "sha256:112398da31a3344dc25dbf477d8df6cb34f9278a94fee2625d89e4514be8bb9d"},
-]
-rsa = [
-    {file = "rsa-4.6-py3-none-any.whl", hash = "sha256:6166864e23d6b5195a5cfed6cd9fed0fe774e226d8f854fcb23b7bbef0350233"},
-    {file = "rsa-4.6.tar.gz", hash = "sha256:109ea5a66744dd859bf16fe904b8d8b627adafb9408753161e766a92e7d681fa"},
 ]
 six = [
     {file = "six-1.15.0-py2.py3-none-any.whl", hash = "sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced"},
@@ -878,15 +862,24 @@ toml = [
     {file = "toml-0.10.1-py2.py3-none-any.whl", hash = "sha256:bda89d5935c2eac546d648028b9901107a595863cb36bae0c73ac804a9b4ce88"},
     {file = "toml-0.10.1.tar.gz", hash = "sha256:926b612be1e5ce0634a2ca03470f95169cf16f939018233a670519cb4ac58b0f"},
 ]
+typing-extensions = [
+    {file = "typing_extensions-3.7.4.3-py2-none-any.whl", hash = "sha256:dafc7639cde7f1b6e1acc0f457842a83e722ccca8eef5270af2d74792619a89f"},
+    {file = "typing_extensions-3.7.4.3-py3-none-any.whl", hash = "sha256:7cb407020f00f7bfc3cb3e7881628838e69d8f3fcab2f64742a5e76b2f841918"},
+    {file = "typing_extensions-3.7.4.3.tar.gz", hash = "sha256:99d4073b617d30288f569d3f13d2bd7548c3a7e4c8de87db09a9d29bb3a4a60c"},
+]
 urllib3 = [
-    {file = "urllib3-1.25.10-py2.py3-none-any.whl", hash = "sha256:e7983572181f5e1522d9c98453462384ee92a0be7fac5f1413a1e35c56cc0461"},
-    {file = "urllib3-1.25.10.tar.gz", hash = "sha256:91056c15fa70756691db97756772bb1eb9678fa585d9184f24534b100dc60f4a"},
+    {file = "urllib3-1.25.11-py2.py3-none-any.whl", hash = "sha256:f5321fbe4bf3fefa0efd0bfe7fb14e90909eb62a48ccda331726b4319897dd5e"},
+    {file = "urllib3-1.25.11.tar.gz", hash = "sha256:8d7eaa5a82a1cac232164990f04874c594c9453ec55eef02eab885aa02fc17a2"},
 ]
 uvicorn = [
-    {file = "uvicorn-0.12.1-py3-none-any.whl", hash = "sha256:d06a25caa8dc680ad92eb3ec67363f5281c092059613a1cc0100acba37fc0f45"},
-    {file = "uvicorn-0.12.1.tar.gz", hash = "sha256:a461e76406088f448f36323f5ac774d50e5a552b6ccb54e4fca8d83ef614a7c2"},
+    {file = "uvicorn-0.12.2-py3-none-any.whl", hash = "sha256:e5dbed4a8a44c7b04376021021d63798d6a7bcfae9c654a0b153577b93854fba"},
+    {file = "uvicorn-0.12.2.tar.gz", hash = "sha256:8ff7495c74b8286a341526ff9efa3988ebab9a4b2f561c7438c3cb420992d7dd"},
 ]
 wcwidth = [
     {file = "wcwidth-0.2.5-py2.py3-none-any.whl", hash = "sha256:beb4802a9cebb9144e99086eff703a642a13d6a0052920003a230f3294bbe784"},
     {file = "wcwidth-0.2.5.tar.gz", hash = "sha256:c4d647b99872929fdb7bdcaa4fbe7f01413ed3d98077df798530e5b04f116c83"},
+]
+zipp = [
+    {file = "zipp-3.3.1-py3-none-any.whl", hash = "sha256:16522f69653f0d67be90e8baa4a46d66389145b734345d68a257da53df670903"},
+    {file = "zipp-3.3.1.tar.gz", hash = "sha256:c1532a8030c32fd52ff6a288d855fe7adef5823ba1d26a29a68fd6314aa72baa"},
 ]

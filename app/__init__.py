@@ -3,6 +3,7 @@ import time
 import os
 import httpx
 import certifi
+import jwt
 from fastapi import FastAPI
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
@@ -17,8 +18,6 @@ assert(all([
         'ENVIRONMENT',
         'DB_CONNECTION_STRING',
         'PASSWORD_SALT',
-        'SECRET_KEY',
-        'HASH_ALGORITHM',
         'ACCESS_TOKEN_LIFETIME',
         'REFRESH_TOKEN_LIFETIME',
         'MAILGUN_API_KEY',
@@ -31,10 +30,35 @@ assert(os.getenv('ENVIRONMENT') in ['production', 'development', 'testing'])
 assert(os.getenv('ACCESS_TOKEN_LIFETIME').isnumeric)
 assert(os.getenv('REFRESH_TOKEN_LIFETIME').isnumeric)
 
+if all([key in os.environ for key in ["PRIVATE_KEY", "PUBLIC_KEY"]]):
+    PRIVATE_KEY = os.getenv("PRIVATE_KEY")
+    PUBLIC_KEY = os.getenv("PUBLIC_KEY")
+else:
+    assert("jwtRS256.key" in os.listdir("."))
+    assert("jwtRS256.key.pub" in os.listdir("."))
+    PRIVATE_KEY = open('jwtRS256.key').read()
+    PUBLIC_KEY = open('jwtRS256.key.pub').read()
+
+# Self Check
+token = jwt.encode(
+    {"some": "data"}, PRIVATE_KEY,
+    algorithm="RS256"
+)
+plain = jwt.decode(
+    token, PUBLIC_KEY,
+    algorithms="RS256"
+)
+assert(plain == {"some": "data"})
+
+
 # Set all environment variables
 ENVIRONMENT = os.getenv('ENVIRONMENT')
 ADMIN_FRONTEND_URL = os.getenv('ADMIN_FRONTEND_URL')
 AUTH_BACKEND_URL = os.getenv('AUTH_BACKEND_URL')
+
+PASSWORD_SALT = os.getenv('PASSWORD_SALT')
+ACCESS_TOKEN_LIFETIME = int(os.getenv('ACCESS_TOKEN_LIFETIME'))
+REFRESH_TOKEN_LIFETIME = int(os.getenv('REFRESH_TOKEN_LIFETIME'))
 
 app = FastAPI()
 

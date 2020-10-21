@@ -9,6 +9,8 @@ RUN poetry install --no-dev
 RUN pip list
 
 EXPOSE 8080
+COPY jwtRS256.key jwtRS256.key
+COPY jwtRS256.key.pub jwtRS256.key.pub
 
 COPY /app /app
 
