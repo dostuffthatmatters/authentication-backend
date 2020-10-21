@@ -7,7 +7,7 @@ from jose import jwt, JWTError
 
 from app import account_collection
 
-from app.utilities.encryption import generate_access_token, check_access_token, check_password_hash
+from app.utilities.encryption import check_access_token, check_password_hash, generate_access_token, generate_refresh_token
 from app.utilities.account_functions import get_account
 
 
@@ -19,7 +19,11 @@ async def authenticate_from_login(
         account = await account_collection.find_one({"email": email})
         assert(account is not None)
         assert(check_password_hash(password, account["hashed_password"]))
-        return generate_access_token(account)
+        return {
+            "access_token": generate_access_token(account),
+            "refresh_token": generate_refresh_token(account),
+            "token_type": "bearer"
+        }
     except AssertionError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

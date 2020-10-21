@@ -20,6 +20,7 @@ assert(all([
         'SECRET_KEY',
         'HASH_ALGORITHM',
         'ACCESS_TOKEN_EXPIRE_MINUTES',
+        'REFRESH_TOKEN_EXPIRE_MINUTES',
         'MAILGUN_API_KEY',
         'ADMIN_FRONTEND_URL',
         'AUTH_BACKEND_URL'
@@ -28,6 +29,7 @@ assert(all([
 
 assert(os.getenv('ENVIRONMENT') in ['production', 'development', 'testing'])
 assert(os.getenv('ACCESS_TOKEN_EXPIRE_MINUTES').isnumeric)
+assert(os.getenv('REFRESH_TOKEN_EXPIRE_MINUTES').isnumeric)
 
 # Set all environment variables
 ENVIRONMENT = os.getenv('ENVIRONMENT')

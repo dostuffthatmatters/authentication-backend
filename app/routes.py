@@ -15,6 +15,7 @@ from app.utilities.account_functions import \
 
 class Token(BaseModel):
     access_token: str
+    refresh_token: str
     token_type: str
 
 
@@ -36,11 +37,10 @@ async def login_route(
     email: str = Form(...),
     password: str = Form(...)
 ):
-    access_token = await authenticate_from_login(email, password)
-    return {"access_token": access_token, "token_type": "bearer"}
+    return await authenticate_from_login(email, password)
 
 
-@app.post('/register', response_model=Account)
+@app.post('/register', response_model=Token)
 async def register_route(
     email: str = Form(...),
     password: str = Form(...)

@@ -4,8 +4,7 @@ from fastapi import HTTPException, status, Response
 
 from app import account_collection
 
-from app.utilities.encryption import generate_password_hash, \
-    check_password_hash, generate_secret_token, validate_password_format
+from app.utilities.encryption import check_password_hash, generate_access_token, generate_password_hash, generate_refresh_token, generate_secret_token, validate_password_format
 from app.utilities.mailing import \
     send_verification_mail, send_forgot_password_mail
 
@@ -52,8 +51,13 @@ async def create_account(email: str, password: str):
         )
 
     return {
-        "email": email,
-        "email_verified": False
+        "access_token": generate_access_token({
+            "email": email, "email_verified": False
+        }),
+        "refresh_token": generate_refresh_token({
+            "email": email, "email_verified": False
+        }),
+        "token_type": "bearer"
     }
 
 

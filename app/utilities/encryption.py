@@ -38,6 +38,20 @@ def generate_access_token(account):
     return encoded_jwt
 
 
+def generate_refresh_token(account):
+    to_encode = {
+        "email": account["email"],
+        "exp": datetime.utcnow() + timedelta(
+            minutes=int(os.getenv('REFRESH_TOKEN_EXPIRE_MINUTES'))
+        )
+    }
+    encoded_jwt = jwt.encode(
+        to_encode, os.getenv('SECRET_KEY'),
+        algorithm=os.getenv('HASH_ALGORITHM')
+    )
+    return encoded_jwt
+
+
 def check_access_token(access_token):
     try:
         payload = jwt.decode(
@@ -45,9 +59,7 @@ def check_access_token(access_token):
             algorithms=[os.getenv('HASH_ALGORITHM')]
         )
         assert("exp" in payload)
-        if datetime.fromtimestamp(payload["exp"]) < (datetime.utcnow() + timedelta(
-            minutes=int(os.getenv('ACCESS_TOKEN_EXPIRE_MINUTES'))
-        )):
+        if payload["exp"] < datetime.timestamp(datetime.utcnow()):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Token expired"
