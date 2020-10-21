@@ -22,14 +22,14 @@ jobs:
               env:
                   ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
                   DB_CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
-                  SECRET_KEY: ${{ secrets.SECRET_KEY }}
                   PASSWORD_SALT: ${{ secrets.PASSWORD_SALT }}
-                  HASH_ALGORITHM: ${{ secrets.HASH_ALGORITHM }}
                   ACCESS_TOKEN_LIFETIME: ${{ secrets.ACCESS_TOKEN_LIFETIME }}
                   REFRESH_TOKEN_LIFETIME: ${{ secrets.REFRESH_TOKEN_LIFETIME }}
                   MAILGUN_API_KEY: ${{ secrets.MAILGUN_API_KEY }}
                   ADMIN_FRONTEND_URL: ${{ secrets.ADMIN_FRONTEND_URL }}
                   AUTH_BACKEND_URL: ${{ secrets.AUTH_BACKEND_URL }}
+                  PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+                  PUBLIC_KEY: ${{ secrets.PUBLIC_KEY }}
             - name: Push Coverage Report to CodeClimate
               uses: paambaati/codeclimate-action@v2.3.0
               env:

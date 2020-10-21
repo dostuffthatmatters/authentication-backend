@@ -30,10 +30,14 @@ assert(os.getenv('ENVIRONMENT') in ['production', 'development', 'testing'])
 assert(os.getenv('ACCESS_TOKEN_LIFETIME').isnumeric)
 assert(os.getenv('REFRESH_TOKEN_LIFETIME').isnumeric)
 
-assert("jwtRS256.key" in os.listdir("."))
-assert("jwtRS256.key.pub" in os.listdir("."))
-PRIVATE_KEY = open('jwtRS256.key').read()
-PUBLIC_KEY = open('jwtRS256.key.pub').read()
+if all([key in os.environ for key in ["PRIVATE_KEY", "PUBLIC_KEY"]]):
+    PRIVATE_KEY = os.getenv("PRIVATE_KEY")
+    PUBLIC_KEY = os.getenv("PUBLIC_KEY")
+else:
+    assert("jwtRS256.key" in os.listdir("."))
+    assert("jwtRS256.key.pub" in os.listdir("."))
+    PRIVATE_KEY = open('jwtRS256.key').read()
+    PUBLIC_KEY = open('jwtRS256.key.pub').read()
 
 # Self Check
 token = jwt.encode(
