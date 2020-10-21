@@ -18,7 +18,6 @@ assert(all([
         'ENVIRONMENT',
         'DB_CONNECTION_STRING',
         'PASSWORD_SALT',
-        'HASH_ALGORITHM',
         'ACCESS_TOKEN_LIFETIME',
         'REFRESH_TOKEN_LIFETIME',
         'MAILGUN_API_KEY',
@@ -39,11 +38,11 @@ PUBLIC_KEY = open('jwtRS256.key.pub').read()
 # Self Check
 token = jwt.encode(
     {"some": "data"}, PRIVATE_KEY,
-    algorithm=os.getenv("HASH_ALGORITHM")
+    algorithm="RS256"
 )
 plain = jwt.decode(
     token, PUBLIC_KEY,
-    algorithms=os.getenv("HASH_ALGORITHM")
+    algorithms="RS256"
 )
 assert(plain == {"some": "data"})
 

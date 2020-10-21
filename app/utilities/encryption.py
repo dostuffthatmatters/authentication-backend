@@ -47,7 +47,7 @@ def generate_jwt(account, token_lifetime):
     }
     return jwt.encode(
         to_encode, PRIVATE_KEY,
-        algorithm=os.getenv('HASH_ALGORITHM')
+        algorithm="RS256"
     ).decode('utf-8')
 
 
@@ -55,7 +55,7 @@ def check_jwt(token):
     try:
         payload = jwt.decode(
             token, PUBLIC_KEY,
-            algorithms=[os.getenv('HASH_ALGORITHM')]
+            algorithms="RS256"
         )
         assert("exp" in payload)
         if payload["exp"] < datetime.timestamp(datetime.utcnow()):
