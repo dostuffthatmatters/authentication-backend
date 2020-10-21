@@ -100,3 +100,26 @@ def check_jwt(token):
             detail="Could not validate credentials"
         )
 ```
+
+Following the OAuth2.0 schema the token has to be passed as a header with every private route:
+
+```bash
+curl ... \
+    -H "Authorization": "bearer <token>"
+```
+
+When using FastAPI you can easily use the built in easification:
+
+```python
+from fastapi.security import OAuth2PasswordBearer
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+
+...
+
+@app.get("/account")
+async def account_route(
+    access_token: str = Depends(oauth2_scheme)
+):
+    ...
+```
