@@ -4,10 +4,11 @@ from pydantic import BaseModel
 from fastapi import Depends, FastAPI, HTTPException, status, Form
 from datetime import datetime, timedelta
 
-from app import app, ENVIRONMENT
+from app import app, ENVIRONMENT, oauth2_scheme
 
 from app.utilities.authentication import \
-    authenticate_from_login, authenticate_from_token
+    authenticate_from_login, authenticate_from_access_token, \
+    authenticate_from_refresh_token
 from app.utilities.account_functions import \
     create_account, verify_account, change_password, \
     forgot_password, restore_forgotten_password
@@ -15,6 +16,7 @@ from app.utilities.account_functions import \
 
 class Token(BaseModel):
     access_token: str
+    refresh_token: str
     token_type: str
 
 
@@ -36,11 +38,17 @@ async def login_route(
     email: str = Form(...),
     password: str = Form(...)
 ):
-    access_token = await authenticate_from_login(email, password)
-    return {"access_token": access_token, "token_type": "bearer"}
+    return await authenticate_from_login(email, password)
 
 
-@app.post('/register', response_model=Account)
+@app.post("/refresh", response_model=Token)
+async def login_route(
+    refresh_token: str = Form(...)
+):
+    return await authenticate_from_refresh_token(refresh_token)
+
+
+@app.post('/register', response_model=Token)
 async def register_route(
     email: str = Form(...),
     password: str = Form(...)
@@ -56,23 +64,20 @@ async def verify_route(
     return await verify_account(email_token, password)
 
 
-# POST and not a GET request because a GET request:
-# 1. might get cached
-# 2. does not have a body (no TLS encryption on the token)
-@app.post("/account", response_model=Account)
+@app.get("/account", response_model=Account)
 async def account_route(
-    access_token: str = Form(...)
+    access_token: str = Depends(oauth2_scheme)
 ):
-    return await authenticate_from_token(access_token)
+    return await authenticate_from_access_token(access_token)
 
 
 @app.post('/change-password')
 async def change_password_route(
-    access_token: str = Form(...),
+    access_token: str = Depends(oauth2_scheme),
     old_password: str = Form(...),
     new_password: str = Form(...)
 ):
-    account = await authenticate_from_token(access_token)
+    account = await authenticate_from_access_token(access_token)
     return await change_password(account, old_password, new_password)
 
 

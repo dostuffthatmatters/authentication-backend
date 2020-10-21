@@ -4,6 +4,7 @@ import os
 import httpx
 import certifi
 from fastapi import FastAPI
+from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from pymongo import MongoClient
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -14,11 +15,12 @@ os.environ['SSL_CERT_FILE'] = certifi.where()
 assert(all([
     isinstance(os.getenv(env_var), str) for env_var in [
         'ENVIRONMENT',
-        'MONGO_DB_CONNECTION_STRING',
+        'DB_CONNECTION_STRING',
         'PASSWORD_SALT',
         'SECRET_KEY',
         'HASH_ALGORITHM',
-        'ACCESS_TOKEN_EXPIRE_MINUTES',
+        'ACCESS_TOKEN_LIFETIME',
+        'REFRESH_TOKEN_LIFETIME',
         'MAILGUN_API_KEY',
         'ADMIN_FRONTEND_URL',
         'AUTH_BACKEND_URL'
@@ -26,7 +28,8 @@ assert(all([
 ]))
 
 assert(os.getenv('ENVIRONMENT') in ['production', 'development', 'testing'])
-assert(os.getenv('ACCESS_TOKEN_EXPIRE_MINUTES').isnumeric)
+assert(os.getenv('ACCESS_TOKEN_LIFETIME').isnumeric)
+assert(os.getenv('REFRESH_TOKEN_LIFETIME').isnumeric)
 
 # Set all environment variables
 ENVIRONMENT = os.getenv('ENVIRONMENT')
@@ -36,11 +39,12 @@ AUTH_BACKEND_URL = os.getenv('AUTH_BACKEND_URL')
 app = FastAPI()
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 # Using the synchronous MongoClient during setup for
 # for index-creation and testing
-pymongo_client = MongoClient(os.getenv('MONGO_DB_CONNECTION_STRING'))
-motor_client = AsyncIOMotorClient(os.getenv('MONGO_DB_CONNECTION_STRING'))
+pymongo_client = MongoClient(os.getenv('DB_CONNECTION_STRING'))
+motor_client = AsyncIOMotorClient(os.getenv('DB_CONNECTION_STRING'))
 database = motor_client[ENVIRONMENT]
 account_collection = database['authentication']
 

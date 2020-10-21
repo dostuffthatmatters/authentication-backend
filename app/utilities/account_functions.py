@@ -4,10 +4,10 @@ from fastapi import HTTPException, status, Response
 
 from app import account_collection
 
-from app.utilities.encryption import generate_password_hash, \
-    check_password_hash, generate_secret_token, validate_password_format
+from app.utilities.encryption import check_password_hash, generate_oauth_token, generate_password_hash, generate_secret_token, validate_password_format
 from app.utilities.mailing import \
     send_verification_mail, send_forgot_password_mail
+import os
 
 
 async def get_account(email: str):
@@ -51,10 +51,7 @@ async def create_account(email: str, password: str):
             detail=f"verification email could not be sent",
         )
 
-    return {
-        "email": email,
-        "email_verified": False
-    }
+    return generate_oauth_token({"email": email, "email_verified": False})
 
 
 async def verify_account(email_token: str, password: str):
