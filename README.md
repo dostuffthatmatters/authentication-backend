@@ -18,6 +18,22 @@ That is why we are reinventing the wheel yet again :)
 
 <br/>
 
+## About
+
+This OAuth Backend uses Public-Key-Cryptography. There is
+a private key that is used to encode(sign) the tokens and
+one public key to decode them. By that each resource server
+(which has to validate jwt's) doesn't have to share any data
+with the authentication backend to verify a token.
+
+We are using the RS256 algorithm to generate a key pair:
+
+```bash
+ssh-keygen -t rsa -b 4096 -m PEM -f jwtRS256.key
+```
+
+The public key is published via the index route "/".
+
 ## Usage
 
 1. Inside your desired python environment run:
@@ -27,19 +43,13 @@ pip install poetry
 poetry install
 ```
 
-2. Generate a private/public-keypair with:
-
-```bash
-ssh-keygen -t rsa -b 4096
-```
-
-3. Run all tests with coverage report with:
+2. Run all tests with coverage report with:
 
 ```bash
 pytest --cov=app --cov-report=term-missing --cov-report=xml ./tests
 ```
 
-4. Run the app (without Docker)
+3. Run the app without Docker ...
 
 ```bash
 uvicorn app:app --host 0.0.0.0 --port 8080
