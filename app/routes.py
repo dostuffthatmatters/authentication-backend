@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from fastapi import Depends, FastAPI, HTTPException, status, Form
 from datetime import datetime, timedelta
 
-from app import app, ENVIRONMENT, oauth2_scheme
+from app import app, ENVIRONMENT, PUBLIC_KEY, oauth2_scheme
 
 from app.utilities.authentication import \
     authenticate_from_login, authenticate_from_access_token, \
@@ -29,7 +29,8 @@ class Account(BaseModel):
 def index_route():
     return {
         "status": "running",
-        "mode": ENVIRONMENT
+        "mode": ENVIRONMENT,
+        "public_key": PUBLIC_KEY
     }
 
 

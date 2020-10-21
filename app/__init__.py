@@ -17,7 +17,6 @@ assert(all([
         'ENVIRONMENT',
         'DB_CONNECTION_STRING',
         'PASSWORD_SALT',
-        'SECRET_KEY',
         'HASH_ALGORITHM',
         'ACCESS_TOKEN_LIFETIME',
         'REFRESH_TOKEN_LIFETIME',
@@ -30,6 +29,15 @@ assert(all([
 assert(os.getenv('ENVIRONMENT') in ['production', 'development', 'testing'])
 assert(os.getenv('ACCESS_TOKEN_LIFETIME').isnumeric)
 assert(os.getenv('REFRESH_TOKEN_LIFETIME').isnumeric)
+
+if None in [os.getenv("PRIVATE_KEY"), os.getenv("PUBLIC_KEY")]:
+    assert("jwt-key" in os.listdir("."))
+    assert("jwt-key.pub" in os.listdir("."))
+    PRIVATE_KEY = open('jwt-key').read()
+    PUBLIC_KEY = open('jwt-key.pub').read()
+else:
+    PRIVATE_KEY = os.getenv("PRIVATE_KEY")
+    PUBLIC_KEY = os.getenv("PUBLIC_KEY")
 
 # Set all environment variables
 ENVIRONMENT = os.getenv('ENVIRONMENT')

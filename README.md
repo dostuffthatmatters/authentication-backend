@@ -50,8 +50,6 @@ uvicorn app:app --host 0.0.0.0 --port 8080
 ```bash
 docker build -t docker-image .
 
-docker run -d -p 8080:8080 \
-    -e ENVIRONMENT='...' \
-    -e ...
-    docker-image
+# Set all required env variables here
+docker run -d -p 8080:8080 --env-file .env docker-image
 ```
