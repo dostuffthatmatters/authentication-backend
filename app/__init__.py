@@ -56,6 +56,10 @@ ENVIRONMENT = os.getenv('ENVIRONMENT')
 ADMIN_FRONTEND_URL = os.getenv('ADMIN_FRONTEND_URL')
 AUTH_BACKEND_URL = os.getenv('AUTH_BACKEND_URL')
 
+PASSWORD_SALT = os.getenv('PASSWORD_SALT')
+ACCESS_TOKEN_LIFETIME = int(os.getenv('ACCESS_TOKEN_LIFETIME'))
+REFRESH_TOKEN_LIFETIME = int(os.getenv('REFRESH_TOKEN_LIFETIME'))
+
 app = FastAPI()
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

@@ -6,17 +6,18 @@ import jwt
 import os
 from fastapi import HTTPException, status
 
-from app import pwd_context, PRIVATE_KEY, PUBLIC_KEY
+from app import pwd_context, PRIVATE_KEY, PUBLIC_KEY, \
+    PASSWORD_SALT, ACCESS_TOKEN_LIFETIME, REFRESH_TOKEN_LIFETIME
 
 
 def check_password_hash(plain_password: str, hashed_password: str):
     return pwd_context.verify(
-        plain_password + os.getenv('PASSWORD_SALT'), hashed_password
+        plain_password + PASSWORD_SALT, hashed_password
     )
 
 
 def generate_password_hash(password: str):
-    return pwd_context.hash(password + os.getenv('PASSWORD_SALT'))
+    return pwd_context.hash(password + PASSWORD_SALT)
 
 
 def generate_secret_token(length=32):
@@ -27,11 +28,11 @@ def generate_oauth_token(account):
     return {
         "access_token": generate_jwt(
             {"email": account["email"], "email_verified": False},
-            int(os.getenv('ACCESS_TOKEN_LIFETIME'))
+            ACCESS_TOKEN_LIFETIME
         ),
         "refresh_token": generate_jwt(
             {"email": account["email"], "email_verified": False},
-            int(os.getenv('REFRESH_TOKEN_LIFETIME'))
+            REFRESH_TOKEN_LIFETIME
         ),
         "token_type": "bearer"
     }
