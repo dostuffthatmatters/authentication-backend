@@ -6,7 +6,7 @@ import jwt
 import os
 from fastapi import HTTPException, status
 
-from app import pwd_context, PRIVATE_KEY, PUBLIC_KEY, \
+from app import pwd_context, JWT_ALGORITHM, PRIVATE_KEY, PUBLIC_KEY, \
     PASSWORD_SALT, ACCESS_TOKEN_LIFETIME, REFRESH_TOKEN_LIFETIME
 
 
@@ -48,7 +48,7 @@ def generate_jwt(account, token_lifetime):
     }
     return jwt.encode(
         to_encode, PRIVATE_KEY,
-        algorithm="RS256"
+        algorithm=JWT_ALGORITHM
     ).decode('utf-8')
 
 
@@ -56,7 +56,7 @@ def check_jwt(token):
     try:
         payload = jwt.decode(
             token, PUBLIC_KEY,
-            algorithms="RS256"
+            algorithms=JWT_ALGORITHM
         )
         assert("exp" in payload)
         if payload["exp"] < datetime.timestamp(datetime.utcnow()):
