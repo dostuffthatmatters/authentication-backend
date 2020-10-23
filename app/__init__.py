@@ -6,6 +6,7 @@ import certifi
 import jwt
 from fastapi import FastAPI
 from fastapi.security import OAuth2PasswordBearer
+from fastapi.middleware.cors import CORSMiddleware
 from passlib.context import CryptContext
 from pymongo import MongoClient
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -30,18 +31,15 @@ assert(os.getenv('ENVIRONMENT') in ['production', 'development', 'testing'])
 assert(os.getenv('ACCESS_TOKEN_LIFETIME').isnumeric)
 assert(os.getenv('REFRESH_TOKEN_LIFETIME').isnumeric)
 
-if all([key in os.environ for key in [
-    "JWT_ALGORITHM", "PRIVATE_KEY", "PUBLIC_KEY"
-]]):
-    JWT_ALGORITHM = os.getenv('JWT_ALGORITHM')
-    PRIVATE_KEY = os.getenv("PRIVATE_KEY")
-    PUBLIC_KEY = os.getenv("PUBLIC_KEY")
-else:
-    assert("jwtRS256.key" in os.listdir("."))
-    assert("jwtRS256.key.pub" in os.listdir("."))
-    JWT_ALGORITHM = "RS256"
-    PRIVATE_KEY = open('jwtRS256.key').read()
-    PUBLIC_KEY = open('jwtRS256.key.pub').read()
+JWT_ALGORITHM = os.environ.get('JWT_ALGORITHM', default="RS256")
+PRIVATE_KEY = os.environ.get("PRIVATE_KEY", default=None)
+PUBLIC_KEY = os.environ.get("PUBLIC_KEY", default=None)
+
+if None in [PRIVATE_KEY, PUBLIC_KEY]:
+    assert("jwtRS256.key" in os.listdir("."))  # pragma: no cover
+    assert("jwtRS256.key.pub" in os.listdir("."))  # pragma: no cover
+    PRIVATE_KEY = open('jwtRS256.key').read()  # pragma: no cover
+    PUBLIC_KEY = open('jwtRS256.key.pub').read()  # pragma: no cover
 
 # Self Check
 token = jwt.encode(
@@ -65,6 +63,15 @@ ACCESS_TOKEN_LIFETIME = int(os.getenv('ACCESS_TOKEN_LIFETIME'))
 REFRESH_TOKEN_LIFETIME = int(os.getenv('REFRESH_TOKEN_LIFETIME'))
 
 app = FastAPI()
+
+# TODO: Add correct list of origins
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
