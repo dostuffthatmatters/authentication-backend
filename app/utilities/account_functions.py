@@ -51,7 +51,7 @@ async def create_account(email: str, password: str):
             detail=f"verification email could not be sent",
         )
 
-    return generate_oauth_token({"email": email, "email_verified": False})
+    return {"email": email, "email_verified": False}
 
 
 async def verify_account(email_token: str, password: str):

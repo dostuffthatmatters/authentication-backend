@@ -12,6 +12,7 @@ from app.utilities.authentication import \
 from app.utilities.account_functions import \
     create_account, verify_account, change_password, \
     forgot_password, restore_forgotten_password
+from app.utilities.encryption import generate_oauth_token
 
 
 class Token(BaseModel):
@@ -34,12 +35,16 @@ def index_route():
     }
 
 
-@app.post("/login", response_model=Token)
+@app.post("/login")
 async def login_route(
     email: str = Form(...),
     password: str = Form(...)
 ):
-    return await authenticate_from_login(email, password)
+    account = await authenticate_from_login(email, password)
+    return {
+        "jwt": generate_oauth_token(account),
+        "account": account
+    }
 
 
 @app.post("/refresh", response_model=Token)
@@ -49,12 +54,16 @@ async def login_route(
     return await authenticate_from_refresh_token(refresh_token)
 
 
-@app.post('/register', response_model=Token)
+@app.post('/register')
 async def register_route(
     email: str = Form(...),
     password: str = Form(...)
 ):
-    return await create_account(email, password)
+    account = await create_account(email, password)
+    return {
+        "jwt": generate_oauth_token(account),
+        "account": account
+    }
 
 
 @app.post('/verify')
