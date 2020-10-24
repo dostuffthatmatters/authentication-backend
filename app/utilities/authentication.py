@@ -46,7 +46,7 @@ async def authenticate_from_refresh_token(refresh_token: str):
         payload = check_jwt(refresh_token)
         account = await get_account(email=payload["email"])
         assert(account is not None)
-        return generate_oauth_token(account)
+        return account
     except (AssertionError, Exception):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

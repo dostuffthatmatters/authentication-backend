@@ -13,6 +13,7 @@ from app.utilities.account_functions import \
     create_account, verify_account, change_password, \
     forgot_password, restore_forgotten_password
 from app.utilities.encryption import generate_oauth_token
+import time
 
 
 class Token(BaseModel):
@@ -35,8 +36,8 @@ def index_route():
     }
 
 
-@app.post("/login")
-async def login_route(
+@app.post("/login/form")
+async def login_form_route(
     email: str = Form(...),
     password: str = Form(...)
 ):
@@ -47,11 +48,26 @@ async def login_route(
     }
 
 
-@app.post("/refresh", response_model=Token)
-async def login_route(
+@app.post("/login/access")
+async def login_access_token_route(
+    access_token: str = Form(...)
+):
+    # Don't need to generate a new jwt when the access_token is still valid
+    account = await authenticate_from_access_token(access_token)
+    return {
+        "account": account
+    }
+
+
+@app.post("/login/refresh")
+async def login_refresh_token_route(
     refresh_token: str = Form(...)
 ):
-    return await authenticate_from_refresh_token(refresh_token)
+    account = await authenticate_from_refresh_token(refresh_token)
+    return {
+        "jwt": generate_oauth_token(account),
+        "account": account
+    }
 
 
 @app.post('/register')
