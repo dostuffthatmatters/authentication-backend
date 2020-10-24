@@ -87,7 +87,11 @@ async def verify_route(
     email_token: str = Form(...),
     password: str = Form(...)
 ):
-    return await verify_account(email_token, password)
+    account = await verify_account(email_token, password)
+    return {
+        "jwt": generate_oauth_token(account),
+        "account": account
+    }
 
 
 @app.get("/account", response_model=Account)

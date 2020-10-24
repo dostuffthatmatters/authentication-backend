@@ -27,7 +27,7 @@ async def create_account(email: str, password: str):
     account_model = {
         "email": email,
         "hashed_password": generate_password_hash(password),
-        "email_token": generate_secret_token(length=32),
+        "email_token": generate_secret_token(length=20),
         "email_verified": False
     }
 
@@ -57,8 +57,7 @@ async def create_account(email: str, password: str):
 async def verify_account(email_token: str, password: str):
     try:
         account = await account_collection.find_one(
-            {"email_token": email_token},
-            {"_id": 0, "hashed_password": 1}
+            {"email_token": email_token}
         )
         assert(account is not None)
         assert(check_password_hash(password, account["hashed_password"]))
@@ -66,10 +65,13 @@ async def verify_account(email_token: str, password: str):
             {"email_token": email_token},
             {'$set': {'email_verified': True}}
         )
-        return {"status": "success"}
+        return {
+            "email": account["email"],
+            "email_verified": account["email_verified"]
+        }
     except Exception:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_401_UNAUTHORIZED,
             detail="email_token or password invalid",
         )
 
