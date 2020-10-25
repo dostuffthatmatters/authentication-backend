@@ -111,16 +111,20 @@ async def change_password_route(
     return await change_password(account, old_password, new_password)
 
 
-@app.post('/forgot-password')
+@app.post('/request-new-password')
 async def change_password_route(
     email: str = Form(...)
 ):
     return await forgot_password(email)
 
 
-@app.post('/restore-forgotten-password')
+@app.post('/set-new-password')
 async def change_password_route(
-    forgot_password_token: str = Form(...),
-    new_password: str = Form(...)
+    password_token: str = Form(...),
+    password: str = Form(...)
 ):
-    return await restore_forgotten_password(forgot_password_token, new_password)
+    account = await restore_forgotten_password(password_token, password)
+    return {
+        "jwt": generate_oauth_token(account),
+        "account": account
+    }

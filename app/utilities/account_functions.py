@@ -119,9 +119,13 @@ async def forgot_password(email: str):
         }}
     )
 
-    # 500 Error if mail cannot be sent
-    # 400 not possible since the email should be valid
-    await send_forgot_password_mail(email, token)
+    try:
+        await send_forgot_password_mail(email, token)
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="email could not be sent"
+        )
 
     return {"status": "success"}
 
@@ -136,12 +140,12 @@ async def restore_forgotten_password(forgot_password_token, new_password):
 
     account = await account_collection.find_one(
         {"forgot_password_token": forgot_password_token},
-        {"_id": 0}
+        {"_id": 0, "email": 1, "email_verified": 1}
     )
 
     if account is None:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_401_UNAUTHORIZED,
             detail="forgot_password_token invalid",
         )
 
@@ -150,4 +154,4 @@ async def restore_forgotten_password(forgot_password_token, new_password):
         {'$set': {'hashed_password': generate_password_hash(new_password)},
          '$unset': {'forgot_password_token': 1}}
     )
-    return {"status": "success"}
+    return account
