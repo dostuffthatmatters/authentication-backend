@@ -9,9 +9,9 @@ from app import app, ENVIRONMENT, PUBLIC_KEY, oauth2_scheme
 from app.utilities.authentication import \
     authenticate_from_login, authenticate_from_access_token, \
     authenticate_from_refresh_token
-from app.utilities.account_functions import \
-    create_account, verify_account, change_password, \
-    forgot_password, restore_forgotten_password
+from app.utilities.account_functions import change_password, \
+    create_account, forgot_password, resend_verification, \
+    restore_forgotten_password, verify_account
 from app.utilities.encryption import generate_oauth_token
 import time
 
@@ -128,3 +128,11 @@ async def change_password_route(
         "jwt": generate_oauth_token(account),
         "account": account
     }
+
+
+@app.post('/resend-verification')
+async def change_password_route(
+    email: str = Form(...),
+):
+    await resend_verification(email)
+    return {"status": "success"}
