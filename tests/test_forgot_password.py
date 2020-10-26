@@ -73,4 +73,6 @@ def test_login(client, account_collection):
     login(client, TEST_ACCOUNT, 401)
     login(client, MODIFIED_TEST_ACCOUNT, 200)
 
-    assert("password_token" not in account(account_collection))
+    db_account = account(account_collection)
+    print("--> account", db_account)
+    assert("password_token" not in db_account)

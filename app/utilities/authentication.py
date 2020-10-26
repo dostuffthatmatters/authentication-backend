@@ -45,7 +45,7 @@ async def authenticate_from_refresh_token(refresh_token: str):
     try:
         payload = check_jwt(refresh_token)
         account = await get_account(email=payload["email"])
-        assert(account is not None)
+        assert(account is not None)  # error if account has been deleted since then
         return account
     except (AssertionError, Exception):
         raise HTTPException(

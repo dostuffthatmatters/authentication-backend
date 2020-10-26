@@ -23,6 +23,13 @@ def test_login(client):
     content_dict = get_content_dict(response)
     assert_jwt_account_response(content_dict)
 
+    # Access token refresh works
+    response = client.post("/login/access", data={
+        "access_token": content_dict["jwt"]["access_token"]
+    })
+    assert(response.status_code == 200)
+    assert("account" in get_content_dict(response))
+
     # Try to get private data with invalid access_token
     response = client.get("/account", headers={
         "Authorization": "bearer 123"
