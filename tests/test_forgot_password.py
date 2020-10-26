@@ -8,16 +8,16 @@ MODIFIED_TEST_ACCOUNT = {"email": "f" + TEST_EMAIL_DOMAIN, "password": "123456a!
 
 
 def login(client, data, status_code):
-    response = client.post("/login", data=data)
+    response = client.post("/login/form", data=data)
     assert(response.status_code == status_code)
 
 
 def restore_forgotten_password(
-    client, forgot_password_token, new_password, status_code
+    client, password_token, password, status_code
 ):
-    response = client.post("/restore-forgotten-password", data={
-        "forgot_password_token": forgot_password_token,
-        "new_password": new_password,
+    response = client.post("/set-new-password", data={
+        "password_token": password_token,
+        "password": password,
     })
     assert(response.status_code == status_code)
 
@@ -39,7 +39,7 @@ def test_login(client, account_collection):
     # Login with registered account
     login(client, TEST_ACCOUNT, 200)
 
-    response = client.post("/forgot-password", data={
+    response = client.post("/request-new-password", data={
         "email": TEST_ACCOUNT["email"]
     })
     assert(response.status_code == 200)
@@ -47,24 +47,24 @@ def test_login(client, account_collection):
     # Login with current account still works
     login(client, TEST_ACCOUNT, 200)
 
-    forgot_password_token = account(account_collection)["forgot_password_token"]
+    password_token = account(account_collection)["password_token"]
 
     for test in [
         {
-            "forgot_password_token": "123",
-            "new_password": "123",
+            "password_token": "123",
+            "password": "123",
             "status_code": 400
         }, {
-            "forgot_password_token": "123",
-            "new_password": MODIFIED_TEST_ACCOUNT["password"],
+            "password_token": "123",
+            "password": MODIFIED_TEST_ACCOUNT["password"],
+            "status_code": 401
+        }, {
+            "password_token": password_token,
+            "password": "123",
             "status_code": 400
         }, {
-            "forgot_password_token": forgot_password_token,
-            "new_password": "123",
-            "status_code": 400
-        }, {
-            "forgot_password_token": forgot_password_token,
-            "new_password": MODIFIED_TEST_ACCOUNT["password"],
+            "password_token": password_token,
+            "password": MODIFIED_TEST_ACCOUNT["password"],
             "status_code": 200
         }
     ]:
@@ -73,4 +73,4 @@ def test_login(client, account_collection):
     login(client, TEST_ACCOUNT, 401)
     login(client, MODIFIED_TEST_ACCOUNT, 200)
 
-    assert("forgot_password_token" not in account(account_collection))
+    assert("password_token" not in account(account_collection))

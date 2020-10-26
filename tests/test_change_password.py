@@ -8,10 +8,10 @@ MODIFIED_TEST_ACCOUNT = {"email": "e" + TEST_EMAIL_DOMAIN, "password": "123456a!
 
 
 def login(client, data, status_code):
-    response = client.post("/login", data=data)
+    response = client.post("/login/form", data=data)
     assert(response.status_code == status_code)
     if status_code == 200:
-        return get_content_dict(response)["access_token"]
+        return get_content_dict(response)["jwt"]["access_token"]
 
 
 def change_password(

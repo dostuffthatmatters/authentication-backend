@@ -67,7 +67,7 @@ async def verify_account(email_token: str, password: str):
         )
         return {
             "email": account["email"],
-            "email_verified": account["email_verified"]
+            "email_verified": True
         }
     except Exception:
         raise HTTPException(
@@ -115,7 +115,7 @@ async def forgot_password(email: str):
     await account_collection.update_one(
         {"email": email},
         {"$set": {
-            "forgot_password_token": token,
+            "password_token": token,
         }}
     )
 
@@ -130,7 +130,7 @@ async def forgot_password(email: str):
     return {"status": "success"}
 
 
-async def restore_forgotten_password(forgot_password_token, new_password):
+async def restore_forgotten_password(password_token, new_password):
 
     if not validate_password_format(new_password):
         raise HTTPException(
@@ -139,20 +139,20 @@ async def restore_forgotten_password(forgot_password_token, new_password):
         )
 
     account = await account_collection.find_one(
-        {"forgot_password_token": forgot_password_token},
+        {"password_token": password_token},
         {"_id": 0, "email": 1, "email_verified": 1}
     )
 
     if account is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="forgot_password_token invalid",
+            detail="password_token invalid",
         )
 
     await account_collection.update_one(
-        {"forgot_password_token": forgot_password_token},
+        {"password_token": password_token},
         {'$set': {'hashed_password': generate_password_hash(new_password)},
-         '$unset': {'forgot_password_token': 1}}
+         '$unset': {'password_token': 1}}
     )
     return account
 
