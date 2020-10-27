@@ -1,6 +1,6 @@
 
-from tests.conftest import get_content_dict, email_account, \
-    assert_jwt_account_response
+from tests.conftest import assert_account_response, \
+    assert_oauth2_token_response, email_account, get_content_dict
 
 
 TEST_ACCOUNT = {"email": email_account(40), "password": "000000d!"}
@@ -21,11 +21,12 @@ def test_login(client):
 
     # Check whether response has the right format
     content_dict = get_content_dict(response)
-    assert_jwt_account_response(content_dict)
+    assert_oauth2_token_response(content_dict)
+    assert_account_response(content_dict)
 
     # Access token refresh works
     response = client.post("/login/access", data={
-        "access_token": content_dict["jwt"]["access_token"]
+        "access_token": content_dict["oauth2_token"]["access_token"]
     })
     assert(response.status_code == 200)
     assert("account" in get_content_dict(response))
@@ -38,7 +39,7 @@ def test_login(client):
 
     # Try to get private data with valid access_token
     response = client.get("/account", headers={
-        "Authorization": "bearer " + content_dict["jwt"]["access_token"]
+        "Authorization": "bearer " + content_dict["oauth2_token"]["access_token"]
     })
     assert(response.status_code == 200)
     content_dict = get_content_dict(response)

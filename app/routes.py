@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from fastapi import Depends, FastAPI, HTTPException, status, Form
 from datetime import datetime, timedelta
 
-from app import app, ENVIRONMENT, PUBLIC_KEY, oauth2_scheme
+from app import app, ENVIRONMENT, PUBLIC_KEY, JWT_ALGORITHM, oauth2_scheme
 
 from app.utilities.authentication import \
     authenticate_from_login, authenticate_from_access_token, \
@@ -32,7 +32,8 @@ def index_route():
     return {
         "status": "healthy",
         "mode": ENVIRONMENT,
-        "public_key": PUBLIC_KEY
+        "public_key": PUBLIC_KEY,
+        "jwt_algorithm": JWT_ALGORITHM
     }
 
 
@@ -43,7 +44,7 @@ async def login_form_route(
 ):
     account = await authenticate_from_login(email, password)
     return {
-        "jwt": generate_oauth_token(account),
+        "oauth2_token": generate_oauth_token(account),
         "account": account
     }
 
@@ -65,7 +66,7 @@ async def login_refresh_token_route(
 ):
     account = await authenticate_from_refresh_token(refresh_token)
     return {
-        "jwt": generate_oauth_token(account),
+        "oauth2_token": generate_oauth_token(account),
         "account": account
     }
 
@@ -77,7 +78,7 @@ async def register_route(
 ):
     account = await create_account(email, password)
     return {
-        "jwt": generate_oauth_token(account),
+        "oauth2_token": generate_oauth_token(account),
         "account": account
     }
 
@@ -89,7 +90,7 @@ async def verify_route(
 ):
     account = await verify_account(email_token, password)
     return {
-        "jwt": generate_oauth_token(account),
+        "oauth2_token": generate_oauth_token(account),
         "account": account
     }
 
@@ -125,7 +126,7 @@ async def change_password_route(
 ):
     account = await restore_forgotten_password(password_token, password)
     return {
-        "jwt": generate_oauth_token(account),
+        "oauth2_token": generate_oauth_token(account),
         "account": account
     }
 

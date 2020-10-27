@@ -35,11 +35,16 @@ def get_content_dict(response):
     return content_dict
 
 
-def assert_jwt_account_response(content_dict):
-    assert(all([key in content_dict for key in
-                ["jwt", "account"]]))
-    assert(all([key in content_dict["jwt"] for key in
+def assert_oauth2_token_response(content_dict):
+    assert("oauth2_token" in content_dict)
+    assert(all([key in content_dict["oauth2_token"] for key in
                 ["access_token", "refresh_token", "token_type"]]))
+
+
+def assert_account_response(content_dict):
+    assert("account" in content_dict)
+    assert(all([key in content_dict["account"] for key in
+                ["email", "email_verified"]]))
 
 
 def email_account(n: int):

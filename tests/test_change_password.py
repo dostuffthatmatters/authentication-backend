@@ -11,7 +11,7 @@ def login(client, data, status_code):
     response = client.post("/login/form", data=data)
     assert(response.status_code == status_code)
     if status_code == 200:
-        return get_content_dict(response)["jwt"]["access_token"]
+        return get_content_dict(response)["oauth2_token"]["access_token"]
 
 
 def change_password(
