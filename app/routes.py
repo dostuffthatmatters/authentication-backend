@@ -9,9 +9,11 @@ from app import app, ENVIRONMENT, PUBLIC_KEY, oauth2_scheme
 from app.utilities.authentication import \
     authenticate_from_login, authenticate_from_access_token, \
     authenticate_from_refresh_token
-from app.utilities.account_functions import \
-    create_account, verify_account, change_password, \
-    forgot_password, restore_forgotten_password
+from app.utilities.account_functions import change_password, \
+    create_account, forgot_password, resend_verification, \
+    restore_forgotten_password, verify_account
+from app.utilities.encryption import generate_oauth_token
+import time
 
 
 class Token(BaseModel):
@@ -34,27 +36,50 @@ def index_route():
     }
 
 
-@app.post("/login", response_model=Token)
-async def login_route(
+@app.post("/login/form")
+async def login_form_route(
     email: str = Form(...),
     password: str = Form(...)
 ):
-    return await authenticate_from_login(email, password)
+    account = await authenticate_from_login(email, password)
+    return {
+        "jwt": generate_oauth_token(account),
+        "account": account
+    }
 
 
-@app.post("/refresh", response_model=Token)
-async def login_route(
+@app.post("/login/access")
+async def login_access_token_route(
+    access_token: str = Form(...)
+):
+    # Don't need to generate a new jwt when the access_token is still valid
+    account = await authenticate_from_access_token(access_token)
+    return {
+        "account": account
+    }
+
+
+@app.post("/login/refresh")
+async def login_refresh_token_route(
     refresh_token: str = Form(...)
 ):
-    return await authenticate_from_refresh_token(refresh_token)
+    account = await authenticate_from_refresh_token(refresh_token)
+    return {
+        "jwt": generate_oauth_token(account),
+        "account": account
+    }
 
 
-@app.post('/register', response_model=Token)
+@app.post('/register')
 async def register_route(
     email: str = Form(...),
     password: str = Form(...)
 ):
-    return await create_account(email, password)
+    account = await create_account(email, password)
+    return {
+        "jwt": generate_oauth_token(account),
+        "account": account
+    }
 
 
 @app.post('/verify')
@@ -62,7 +87,11 @@ async def verify_route(
     email_token: str = Form(...),
     password: str = Form(...)
 ):
-    return await verify_account(email_token, password)
+    account = await verify_account(email_token, password)
+    return {
+        "jwt": generate_oauth_token(account),
+        "account": account
+    }
 
 
 @app.get("/account", response_model=Account)
@@ -82,16 +111,28 @@ async def change_password_route(
     return await change_password(account, old_password, new_password)
 
 
-@app.post('/forgot-password')
+@app.post('/request-new-password')
 async def change_password_route(
     email: str = Form(...)
 ):
     return await forgot_password(email)
 
 
-@app.post('/restore-forgotten-password')
+@app.post('/set-new-password')
 async def change_password_route(
-    forgot_password_token: str = Form(...),
-    new_password: str = Form(...)
+    password_token: str = Form(...),
+    password: str = Form(...)
 ):
-    return await restore_forgotten_password(forgot_password_token, new_password)
+    account = await restore_forgotten_password(password_token, password)
+    return {
+        "jwt": generate_oauth_token(account),
+        "account": account
+    }
+
+
+@app.post('/resend-verification')
+async def change_password_route(
+    email: str = Form(...),
+):
+    await resend_verification(email)
+    return {"status": "success"}

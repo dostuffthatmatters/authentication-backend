@@ -24,7 +24,7 @@ async def send_verification_mail(db_account):
 def verification_email_html(db_account):
     assert("email_token" in db_account)
     verification_url = (
-        ADMIN_FRONTEND_URL + "/verify-email?token=" + db_account["email_token"]
+        ADMIN_FRONTEND_URL + "/verify?token=" + db_account["email_token"]
     )
     return (
         '<h1>Welcome to FastSurvey!</h1>' +
@@ -48,7 +48,7 @@ async def send_forgot_password_mail(email: str, token: str):
 
 def forgot_password_email_html(token: str):
     verification_url = (
-        ADMIN_FRONTEND_URL + "/forgot-password?token=" + token
+        ADMIN_FRONTEND_URL + "/set-password?token=" + token
     )
     return (
         '<h1>Restore your FastSurvey account</h1>' +

@@ -1,17 +1,17 @@
 
 from symbol import and_test
 
-from tests.conftest import TEST_EMAIL_DOMAIN, get_content_dict
+from tests.conftest import email_account, get_content_dict
 
-TEST_ACCOUNT = {"email": "e" + TEST_EMAIL_DOMAIN, "password": "123456a!"}
-MODIFIED_TEST_ACCOUNT = {"email": "e" + TEST_EMAIL_DOMAIN, "password": "123456a!!!"}
+TEST_ACCOUNT = {"email": email_account(10), "password": "123456a!"}
+MODIFIED_TEST_ACCOUNT = {"email": email_account(10), "password": "123456a!!!"}
 
 
 def login(client, data, status_code):
-    response = client.post("/login", data=data)
+    response = client.post("/login/form", data=data)
     assert(response.status_code == status_code)
     if status_code == 200:
-        return get_content_dict(response)["access_token"]
+        return get_content_dict(response)["jwt"]["access_token"]
 
 
 def change_password(

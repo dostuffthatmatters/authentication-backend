@@ -27,7 +27,7 @@ async def create_account(email: str, password: str):
     account_model = {
         "email": email,
         "hashed_password": generate_password_hash(password),
-        "email_token": generate_secret_token(length=32),
+        "email_token": generate_secret_token(length=20),
         "email_verified": False
     }
 
@@ -51,14 +51,13 @@ async def create_account(email: str, password: str):
             detail=f"verification email could not be sent",
         )
 
-    return generate_oauth_token({"email": email, "email_verified": False})
+    return {"email": email, "email_verified": False}
 
 
 async def verify_account(email_token: str, password: str):
     try:
         account = await account_collection.find_one(
-            {"email_token": email_token},
-            {"_id": 0, "hashed_password": 1}
+            {"email_token": email_token}
         )
         assert(account is not None)
         assert(check_password_hash(password, account["hashed_password"]))
@@ -66,10 +65,13 @@ async def verify_account(email_token: str, password: str):
             {"email_token": email_token},
             {'$set': {'email_verified': True}}
         )
-        return {"status": "success"}
+        return {
+            "email": account["email"],
+            "email_verified": True
+        }
     except Exception:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_401_UNAUTHORIZED,
             detail="email_token or password invalid",
         )
 
@@ -113,18 +115,17 @@ async def forgot_password(email: str):
     await account_collection.update_one(
         {"email": email},
         {"$set": {
-            "forgot_password_token": token,
+            "password_token": token,
         }}
     )
 
-    # 500 Error if mail cannot be sent
-    # 400 not possible since the email should be valid
+    # 500 error if email cannot be sent
     await send_forgot_password_mail(email, token)
 
     return {"status": "success"}
 
 
-async def restore_forgotten_password(forgot_password_token, new_password):
+async def restore_forgotten_password(password_token, new_password):
 
     if not validate_password_format(new_password):
         raise HTTPException(
@@ -133,19 +134,27 @@ async def restore_forgotten_password(forgot_password_token, new_password):
         )
 
     account = await account_collection.find_one(
-        {"forgot_password_token": forgot_password_token},
-        {"_id": 0}
+        {"password_token": password_token},
+        {"_id": 0, "email": 1, "email_verified": 1}
     )
 
     if account is None:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="forgot_password_token invalid",
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="password_token invalid",
         )
 
     await account_collection.update_one(
-        {"forgot_password_token": forgot_password_token},
+        {"password_token": password_token},
         {'$set': {'hashed_password': generate_password_hash(new_password)},
-         '$unset': {'forgot_password_token': 1}}
+         '$unset': {'password_token': 1}}
     )
-    return {"status": "success"}
+    return account
+
+
+async def resend_verification(email):
+    account = await account_collection.find_one({"email": email})
+
+    if account is not None:
+        # 500 error if email cannot be sent
+        await send_verification_mail(account)

@@ -20,7 +20,7 @@ async def authenticate_from_login(
         account = await account_collection.find_one({"email": email})
         assert(account is not None)
         assert(check_password_hash(password, account["hashed_password"]))
-        return generate_oauth_token(account)
+        return {"email": account["email"], "email_verified": account["email_verified"]}
     except AssertionError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -45,8 +45,8 @@ async def authenticate_from_refresh_token(refresh_token: str):
     try:
         payload = check_jwt(refresh_token)
         account = await get_account(email=payload["email"])
-        assert(account is not None)
-        return generate_oauth_token(account)
+        assert(account is not None)  # error if account has been deleted since then
+        return account
     except (AssertionError, Exception):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

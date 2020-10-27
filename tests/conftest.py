@@ -35,4 +35,13 @@ def get_content_dict(response):
     return content_dict
 
 
-TEST_EMAIL_DOMAIN = "@testing.fastsurvey.io"
+def assert_jwt_account_response(content_dict):
+    assert(all([key in content_dict for key in
+                ["jwt", "account"]]))
+    assert(all([key in content_dict["jwt"] for key in
+                ["access_token", "refresh_token", "token_type"]]))
+
+
+def email_account(n: int):
+    assert(n > 0)
+    return f"test+{n}@fastsurvey.io"

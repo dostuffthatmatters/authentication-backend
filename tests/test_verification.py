@@ -1,7 +1,7 @@
 
-from tests.conftest import get_content_dict, TEST_EMAIL_DOMAIN
+from tests.conftest import get_content_dict, email_account
 
-TEST_ACCOUNT = {"email": "d" + TEST_EMAIL_DOMAIN, "password": "000000fg!"}
+TEST_ACCOUNT = {"email": email_account(90), "password": "000000fg!"}
 
 
 def verify_response(client, email_token, password):
@@ -29,14 +29,14 @@ def test_verification(client, account_collection):
     response = verify_response(
         client, account_in_db["email_token"], "123"
     )
-    assert(response.status_code == 400)
+    assert(response.status_code == 401)
     assert(account(account_collection)["email_verified"] == False)
 
     # Submit incorrect token
     response = verify_response(
         client, "123", TEST_ACCOUNT["password"]
     )
-    assert(response.status_code == 400)
+    assert(response.status_code == 401)
     assert(account(account_collection)["email_verified"] == False)
 
     # Submit correct token and password
