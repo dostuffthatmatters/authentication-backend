@@ -42,4 +42,6 @@ def assert_jwt_account_response(content_dict):
                 ["access_token", "refresh_token", "token_type"]]))
 
 
-TEST_EMAIL_DOMAIN = "@testing.fastsurvey.io"
+def email_account(n: int):
+    assert(n > 0)
+    return f"test+{n}@fastsurvey.io"

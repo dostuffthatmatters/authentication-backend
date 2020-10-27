@@ -1,7 +1,7 @@
 
-from tests.conftest import get_content_dict, TEST_EMAIL_DOMAIN
+from tests.conftest import get_content_dict, email_account
 
-TEST_ACCOUNT = {"email": "d" + TEST_EMAIL_DOMAIN, "password": "000000fg!"}
+TEST_ACCOUNT = {"email": email_account(90), "password": "000000fg!"}
 
 
 def verify_response(client, email_token, password):

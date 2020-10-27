@@ -1,9 +1,9 @@
 
-from tests.conftest import get_content_dict, TEST_EMAIL_DOMAIN, \
+from tests.conftest import get_content_dict, email_account, \
     assert_jwt_account_response
 
 
-TEST_ACCOUNT = {"email": "c" + TEST_EMAIL_DOMAIN, "password": "000000d!"}
+TEST_ACCOUNT = {"email": email_account(40), "password": "000000d!"}
 
 
 def test_login(client):

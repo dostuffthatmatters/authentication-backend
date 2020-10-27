@@ -1,10 +1,10 @@
 
 from symbol import and_test
 
-from tests.conftest import TEST_EMAIL_DOMAIN, get_content_dict
+from tests.conftest import email_account, get_content_dict
 
-TEST_ACCOUNT = {"email": "f" + TEST_EMAIL_DOMAIN, "password": "123456a!"}
-MODIFIED_TEST_ACCOUNT = {"email": "f" + TEST_EMAIL_DOMAIN, "password": "123456a!!!"}
+TEST_ACCOUNT = {"email": email_account(30), "password": "123456a!"}
+MODIFIED_TEST_ACCOUNT = {"email": email_account(30), "password": "123456a!!!"}
 
 
 def login(client, data, status_code):

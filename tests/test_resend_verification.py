@@ -1,11 +1,11 @@
 
 from symbol import and_test
 
-from tests.conftest import TEST_EMAIL_DOMAIN, get_content_dict
+from tests.conftest import email_account, get_content_dict
 
-INVALID_TEST_ACCOUNT = {"email": "h"}
-VALID_TEST_ACCOUNT = {"email": "h" + TEST_EMAIL_DOMAIN}
-REGISTERED_TEST_ACCOUNT = {"email": "i" + TEST_EMAIL_DOMAIN, "password": "123456789"}
+INVALID_TEST_ACCOUNT = {"email": "70"}
+VALID_TEST_ACCOUNT = {"email": email_account(70)}
+REGISTERED_TEST_ACCOUNT = {"email": email_account(71), "password": "123456789"}
 
 
 def resend_verification(client, data, status_code):
