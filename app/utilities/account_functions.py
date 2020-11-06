@@ -22,10 +22,10 @@ class AccountManager:
         """Initialize an account manager instance."""
         self.collection = database['authentication']
 
-    async def fetch(self, key: str):
+    async def fetch(self, email: str):
         """Fetch an account given its primary key."""
         return await self.collection.find_one(
-            query={'email': key},
+            filter={'email': email},
             projection={'_id': False},
         )
 
@@ -70,9 +70,24 @@ class AccountManager:
 
         return {'email': email, 'verified': False}
 
-    async def verify(self):
+    async def verify(self, email: str, password: str, token: str):
         """Verify an existing account via its unique verification token."""
-        raise HTTPException(501, 'not yet implemented')
+        account = await account_collection.find_one(
+            query={'email': email, 'token': token},
+            projection={'_id': False, 'token': False, 'verified': False},
+        )
+        if account is None:
+            raise HTTPException(401, 'invalid token')
+        if not check_password_hash(password, account['pwdhash']):
+            raise HTTPException(401, 'invalid password')
+        await account_collection.update_one(
+            filter={'email': email, 'token': token},
+            update={'$set': {'verified': True}}
+        )
+        return {
+            'email': email,
+            'verified': True
+        }
 
     async def update(self):
         """Update an existing account in the database."""
