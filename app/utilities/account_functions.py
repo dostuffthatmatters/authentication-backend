@@ -12,6 +12,7 @@ import os
 
 
 from pymongo.errors import DuplicateKeyError
+from datetime import datetime
 
 
 
@@ -20,11 +21,18 @@ class AccountManager:
 
     def __init__(self, database):
         """Initialize an account manager instance."""
-        self.collection = database['authentication']
+        self.unverified = database['authentication.accounts.unverified']
+        self.verified = database['authentication.accounts.verified']
+        self.unverified.create_index(
+            keys='timestamp',
+            name='timestamp-index',
+            # delete unverified accounts after 10 minutes
+            expireAfterSeconds=10*60,
+        )
 
     async def fetch(self, email: str):
         """Fetch an account given its primary key."""
-        return await self.collection.find_one(
+        return await self.verified.find_one(
             filter={'email': email},
             projection={'_id': False},
         )
@@ -38,28 +46,30 @@ class AccountManager:
         if not validate_password_format(password):
             raise HTTPException(400, 'invalid password format')
 
-        # TODO create own primary key intead of using the email
+        # TODO create own primary key instead of using the email
 
-        account = {
+        check = await self.verified.find_one(
+            filter={'email': email},
+            projection={'_id': False, 'pwdhash': False},
+        )
+        if check is not None:
+            raise HTTPException(400, 'email already taken')
+
+        unverified_account = {
             'email': email,
             'pwdhash': generate_password_hash(password),
             'token': generate_secret_token(length=64),
-            'verified': False,
+            'created': datetime.utcnow(),
         }
-
-        try:
-            await self.collection.insert_one(account)
-        except DuplicateKeyError:
-            raise HTTPException(400, 'email already taken')
+        await self.unverified.insert_one(unverified_account)
 
         # TODO replace AssertionErrors with meaningful exceptions
-        # use TTL collection to delete unsuccessful verification accounts
-        # generally split verified and unverified up into two collections
+        # how do we deal with mailing errors when entries get deleted anyways?
 
         try:
-            await send_verification_mail(account)
+            await send_verification_mail(unverified_account)
         except AssertionError:
-            await self.collection.delete_one({'email': email})
+            await self.unverified.delete_one({'email': email})
             raise HTTPException(
 
                 # TODO is this the right status code?
@@ -72,22 +82,24 @@ class AccountManager:
 
     async def verify(self, email: str, password: str, token: str):
         """Verify an existing account via its unique verification token."""
-        account = await account_collection.find_one(
-            query={'email': email, 'token': token},
-            projection={'_id': False, 'token': False, 'verified': False},
-        )
-        if account is None:
-            raise HTTPException(401, 'invalid token')
-        if not check_password_hash(password, account['pwdhash']):
-            raise HTTPException(401, 'invalid password')
-        await account_collection.update_one(
+        unverified_account = await self.unverified.find_one(
             filter={'email': email, 'token': token},
-            update={'$set': {'verified': True}}
+            projection={'_id': False, 'token': False, 'created': False},
         )
-        return {
+        if unverified_account is None:
+            raise HTTPException(401, 'invalid token')
+        if not check_password_hash(password, unverified_account['pwdhash']):
+            raise HTTPException(401, 'invalid password')
+        verified_account = {
             'email': email,
-            'verified': True
+            'pwdhash': unverified_account['pwdhash'],
+            'created': datetime.utcnow(),
         }
+        await self.verified.insert_one(verified_account)
+        await self.unverified.delete_one(
+            filter={'email': email, 'token': token},
+        )
+        return {'email': email, 'verified': True}
 
     async def update(self):
         """Update an existing account in the database."""
