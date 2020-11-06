@@ -10,6 +10,24 @@ from app.utilities.mailing import \
 import os
 
 
+
+class AccountManager:
+    """The AccountManager manages creating/updation/deleting accounts."""
+
+    def __init__(self, database):
+        """Initialize an account manager instance."""
+        self.collection = database['authentication']
+
+    async def fetch(self, key: str):
+        """Fetch a user account by its primary key."""
+        return await self.collection.find_one(
+            query={'email': key},
+            projection={'_id': False},
+        )
+
+
+
+
 async def get_account(email: str):
     return await account_collection.find_one(
         {"email": email}, {"_id": 0, "email": 1, "email_verified": 1}
