@@ -73,6 +73,7 @@ def check_jwt(token):
 
 
 def validate_password_format(password: str):
-    return 8 <= len(password) <= 32
-
-# Validating the Email format here is useless ;)
+    return (
+        type(password) == str
+        and 8 <= len(password) <= 512
+    )

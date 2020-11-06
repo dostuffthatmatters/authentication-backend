@@ -11,6 +11,10 @@ import os
 
 
 
+from pymongo.errors import DuplicateKeyError
+
+
+
 class AccountManager:
     """The AccountManager manages creating/updation/deleting accounts."""
 
@@ -19,12 +23,64 @@ class AccountManager:
         self.collection = database['authentication']
 
     async def fetch(self, key: str):
-        """Fetch a user account by its primary key."""
+        """Fetch an account given its primary key."""
         return await self.collection.find_one(
             query={'email': key},
             projection={'_id': False},
         )
 
+    async def create(self, email: str, password: str):
+        """Create a new account in the database."""
+
+        # TODO implement real validator that also checks for email maxlength
+        # and type with better error reporting
+
+        if not validate_password_format(password):
+            raise HTTPException(400, 'invalid password format')
+
+        # TODO create own primary key intead of using the email
+
+        account = {
+            'email': email,
+            'pwdhash': generate_password_hash(password),
+            'token': generate_secret_token(length=64),
+            'verified': False,
+        }
+
+        try:
+            await self.collection.insert_one(account)
+        except DuplicateKeyError:
+            raise HTTPException(400, 'email already taken')
+
+        # TODO replace AssertionErrors with meaningful exceptions
+        # use TTL collection to delete unsuccessful verification accounts
+        # generally split verified and unverified up into two collections
+
+        try:
+            await send_verification_mail(account)
+        except AssertionError:
+            await self.collection.delete_one({'email': email})
+            raise HTTPException(
+
+                # TODO is this the right status code?
+
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail='verification email could not be sent',
+            )
+
+        return {'email': email, 'verified': False}
+
+    async def verify(self):
+        """Verify an existing account via its unique verification token."""
+        raise HTTPException(501, 'not yet implemented')
+
+    async def update(self):
+        """Update an existing account in the database."""
+        raise HTTPException(501, 'not yet implemented')
+
+    async def delete(self):
+        """Delete all data of an existing account."""
+        raise HTTPException(501, 'not yet implemented')
 
 
 
