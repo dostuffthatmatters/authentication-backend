@@ -42,6 +42,7 @@ class Letterbox:
         html = (
             '<p>Welcome to FastSurvey!</p>'
             + f'<p>Please verify your email address by <a href="{vurl}" target="_blank">clicking here</a>.</p>'
+            + '<p>The verification link is valid for 10 minutes.</p>'
             + '<p>Best, the FastSurvey team</p>'
         )
         return await self.send(receiver, subject, html)
