@@ -41,7 +41,6 @@ class Letterbox:
         vurl = f'{FURL}/verify?token={token}'  # verification url
         html = (
             '<p>Welcome to FastSurvey!</p>'
-            + '<p>We hope that you\'ll gain some interesting insights with your surveys.</p>'
             + f'<p>Please verify your email address by <a href="{vurl}" target="_blank">clicking here</a>.</p>'
             + '<p>Best, the FastSurvey team</p>'
         )

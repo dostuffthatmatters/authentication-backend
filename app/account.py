@@ -24,11 +24,11 @@ from datetime import datetime
 class AccountManager:
     """The AccountManager manages creating/updation/deleting accounts."""
 
-    def __init__(self, database):
+    async def __init__(self, database):
         """Initialize an account manager instance."""
         self.unverified = database['authentication.accounts.unverified']
         self.verified = database['authentication.accounts.verified']
-        self.unverified.create_index(
+        await self.unverified.create_index(
             keys='timestamp',
             name='timestamp-index',
             # delete unverified (draft) accounts after 10 minutes
@@ -88,8 +88,6 @@ class AccountManager:
                 detail='verification email could not be sent',
             )
 
-        return {'email': email, 'verified': False}
-
     async def verify(self, token: str, password: str):
         """Verify an existing account via its unique verification token."""
         unverified_account = await self.unverified.find_one(
@@ -110,7 +108,6 @@ class AccountManager:
         }
         await self.verified.insert_one(verified_account)
         await self.unverified.delete_one(filter={'_id': token})
-        return {'email': verified_account['email'], 'verified': True}
 
     async def update(self):
         """Update an existing account in the database."""
