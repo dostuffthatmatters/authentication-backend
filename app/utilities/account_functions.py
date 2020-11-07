@@ -11,6 +11,11 @@ import os
 
 
 
+
+
+
+import secrets
+
 from pymongo.errors import DuplicateKeyError
 from datetime import datetime
 
@@ -26,7 +31,7 @@ class AccountManager:
         self.unverified.create_index(
             keys='timestamp',
             name='timestamp-index',
-            # delete unverified accounts after 10 minutes
+            # delete unverified (draft) accounts after 10 minutes
             expireAfterSeconds=10*60,
         )
 
@@ -46,7 +51,7 @@ class AccountManager:
         if not validate_password_format(password):
             raise HTTPException(400, 'invalid password format')
 
-        # TODO create own primary key instead of using the email
+        # TODO search for own primary key instead of using the email
 
         check = await self.verified.find_one(
             filter={'email': email},
@@ -56,12 +61,17 @@ class AccountManager:
             raise HTTPException(400, 'email already taken')
 
         unverified_account = {
+            '_id': secrets.token_hex(64),
             'email': email,
             'pwdhash': generate_password_hash(password),
-            'token': generate_secret_token(length=64),
             'created': datetime.utcnow(),
         }
-        await self.unverified.insert_one(unverified_account)
+        while True:
+            try:
+                await self.unverified.insert_one(unverified_account)
+                break
+            except DuplicateKeyError:
+                unverified_account['_id'] = secrets.token_hex(64)
 
         # TODO replace AssertionErrors with meaningful exceptions
         # how do we deal with mailing errors when entries get deleted anyways?
@@ -80,26 +90,27 @@ class AccountManager:
 
         return {'email': email, 'verified': False}
 
-    async def verify(self, email: str, password: str, token: str):
+    async def verify(self, token: str, password: str):
         """Verify an existing account via its unique verification token."""
         unverified_account = await self.unverified.find_one(
-            filter={'email': email, 'token': token},
-            projection={'_id': False, 'token': False, 'created': False},
+            filter={'_id': token},
+            projection={'_id': False, 'created': False},
         )
         if unverified_account is None:
             raise HTTPException(401, 'invalid token')
         if not check_password_hash(password, unverified_account['pwdhash']):
             raise HTTPException(401, 'invalid password')
         verified_account = {
-            'email': email,
+
+            # TODO create own primary key instead of using the email
+
+            'email': unverified_account['email'],
             'pwdhash': unverified_account['pwdhash'],
             'created': datetime.utcnow(),
         }
         await self.verified.insert_one(verified_account)
-        await self.unverified.delete_one(
-            filter={'email': email, 'token': token},
-        )
-        return {'email': email, 'verified': True}
+        await self.unverified.delete_one(filter={'_id': token})
+        return {'email': verified_account['email'], 'verified': True}
 
     async def update(self):
         """Update an existing account in the database."""
