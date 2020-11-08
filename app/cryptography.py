@@ -11,10 +11,10 @@ class PasswordManager:
             deprecated='auto',
         )
 
-    def hash(self, password: str):
+    def hashpwd(self, password: str):
         """Hash the given password and return the hash as string."""
         return self.context.hash(password)
 
-    def verify(self, password: str, hash: str):
+    def checkpwd(self, password: str, pwdhash: str):
         """Return true if the password results in the hash, else False."""
-        return self.context.verify(password, hash)
+        return self.context.verify(password, pwdhash)

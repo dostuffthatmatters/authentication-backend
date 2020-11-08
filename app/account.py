@@ -19,6 +19,7 @@ import secrets
 from pymongo.errors import DuplicateKeyError
 from datetime import datetime
 
+from app.cryptography import PasswordManager
 
 
 class AccountManager:
@@ -34,6 +35,7 @@ class AccountManager:
             # delete unverified (draft) accounts after 10 minutes
             expireAfterSeconds=10*60,
         )
+        self.password_manager = PasswordManager()
 
     async def fetch(self, email: str):
         """Fetch an account given its primary key."""
@@ -63,7 +65,7 @@ class AccountManager:
         unverified_account = {
             '_id': secrets.token_hex(64),
             'email': email,
-            'pwdhash': generate_password_hash(password),
+            'pwdhash': self.password_manager.hashpwd(password),
             'created': datetime.utcnow(),
         }
         while True:
@@ -96,14 +98,15 @@ class AccountManager:
         )
         if unverified_account is None:
             raise HTTPException(401, 'invalid token')
-        if not check_password_hash(password, unverified_account['pwdhash']):
+        pwdhash = unverified_account['pwdhash']
+        if not self.password_manager.checkpwd(password, pwdhash):
             raise HTTPException(401, 'invalid password')
         verified_account = {
 
             # TODO create own primary key instead of using the email
 
             'email': unverified_account['email'],
-            'pwdhash': unverified_account['pwdhash'],
+            'pwdhash': pwdhash,
             'created': datetime.utcnow(),
         }
         await self.verified.insert_one(verified_account)
