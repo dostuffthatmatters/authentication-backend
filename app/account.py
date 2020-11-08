@@ -118,6 +118,10 @@ class AccountManager:
         raise HTTPException(501, 'not yet implemented')
 
 
+    # TODO let password reset tokens have a TTL too
+
+
+
 
 async def get_account(email: str):
     return await account_collection.find_one(

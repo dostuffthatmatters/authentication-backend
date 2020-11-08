@@ -18,6 +18,7 @@ requests = "^2.24.0"
 httpx = "^0.16.1"
 PyJWT = "^1.7.1"
 cryptography = "^3.1.1"
+argon2_cffi = "^20.1.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^4.6"
@@ -25,10 +26,10 @@ pytest-cov = "^2.10.1"
 autopep8 = "^1.5.4"
 python-dotenv = "^0.14.0"
 
+[tool.autopep8]
+max_line_length = 80
+ignore = "E501,W6"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.autopep8]
-max_line_length = 80
-ignore = "E501,W6"

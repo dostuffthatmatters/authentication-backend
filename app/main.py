@@ -51,7 +51,7 @@ def status():
     return {
         'environment': ENVIRONMENT,
         'public_key': PUBLIC_KEY,
-        'private_key': 'lol, just kidding'
+        'private_key': 'loljustkidding'
     }
 
 
