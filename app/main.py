@@ -27,6 +27,8 @@ assert 'jwtRS256.key.pub' in os.listdir()
 ENVIRONMENT = os.getenv('ENVIRONMENT')
 # MongoDB connection string
 MONGODB_CONNECTION_STRING = os.getenv('MONGODB_CONNECTION_STRING')
+# public JWT signature key
+PUBLIC_KEY = open('jwtRS256.key.pub').read()
 
 
 # create fastapi app

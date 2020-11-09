@@ -2,8 +2,9 @@ import jwt
 import os
 
 from passlib.context import CryptContext
-from jwt import ExpiredSignatureError
+from fastapi import HTTPException
 from datetime import datetime, timedelta
+from jwt import ExpiredSignatureError, InvalidSignatureError, InvalidTokenError
 
 
 class PasswordManager:
@@ -20,7 +21,7 @@ class PasswordManager:
         """Hash the given password and return the hash as string."""
         return self.context.hash(password)
 
-    def checkpwd(self, password: str, pwdhash: str):
+    def verifypwd(self, password: str, pwdhash: str):
         """Return true if the password results in the hash, else False."""
         return self.context.verify(password, pwdhash)
 
@@ -28,26 +29,36 @@ class PasswordManager:
 class TokenManager:
     """The TokenManager manages encoding and decoding JSON Web Tokens."""
 
-    PRIVATE_KEY = open('jwtRS256.key').read()
     PUBLIC_KEY = open('jwtRS256.key.pub').read()
-
+    PRIVATE_KEY = open('jwtRS256.key').read()
     ACCESS_TOKEN_TTL = 12*60*60  # 12 hours
     REFRESH_TOKEN_TTL = 60*60  # 1 hour
 
     def generate(self, user_id: str, ttl: int):
+        """Generate a JWT containing the user id and an expiration date."""
         payload = {
             'uid': user_id,
             'iat': datetime.utcnow(),
             'exp': datetime.utcnow() + timedelta(ttl),
         }
-        return jwt.encode(payload, self.PRIVATE_KEY, algorithms='RS256')
+        return jwt.encode(payload, self.PRIVATE_KEY, algorithm='RS256')
 
     def generate_access_token(self, user_id: str):
+        """Generate an access token JWT containing the user id."""
         return self.generate(user_id, self.ACCESS_TOKEN_TTL)
 
     def generate_refresh_token(self, user_id: str):
+        """Generate a refresh token JWT containing the user id."""
         return self.generate(user_id, self.REFRESH_TOKEN_TTL)
 
-    def check(self):
-        raise NotImplementedError
-        # except ExpiredSignatureError
+    def decode(self, token: str):
+        """Decode the given JWT and return the user id."""
+        try:
+            payload = jwt.decode(token, self.PUBLIC_KEY, algorithm='RS256')
+        except ExpiredSignatureError:
+            raise HTTPException(401, 'token expired')
+        except InvalidSignatureError:
+            raise HTTPException(401, 'signature verification failed')
+        except InvalidTokenError:
+            raise HTTPException(400, 'invalid token format')
+        return payload['uid']
