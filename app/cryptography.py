@@ -31,10 +31,10 @@ class TokenManager:
     PRIVATE_KEY = open('jwtRS256.key').read()
     PUBLIC_KEY = open('jwtRS256.key.pub').read()
 
-    ACCESS_TOKEN_TTL = os.getenv('ACCESS_TOKEN_TTL')
-    REFRESH_TOKEN_TTL = os.getenv('REFRESH_TOKEN_TTL')
+    ACCESS_TOKEN_TTL = 12*60*60  # 12 hours
+    REFRESH_TOKEN_TTL = 60*60  # 1 hour
 
-    def generate_token(self, user_id: str, ttl: int):
+    def generate(self, user_id: str, ttl: int):
         payload = {
             'uid': user_id,
             'iat': datetime.utcnow(),
@@ -43,11 +43,11 @@ class TokenManager:
         return jwt.encode(payload, self.PRIVATE_KEY, algorithms='RS256')
 
     def generate_access_token(self, user_id: str):
-        return self.generate_token(user_id, self.ACCESS_TOKEN_TTL)
+        return self.generate(user_id, self.ACCESS_TOKEN_TTL)
 
     def generate_refresh_token(self, user_id: str):
-        return self.generate_token(user_id, self.REFRESH_TOKEN_TTL)
+        return self.generate(user_id, self.REFRESH_TOKEN_TTL)
 
-    def decode(self):
+    def check(self):
         raise NotImplementedError
         # except ExpiredSignatureError

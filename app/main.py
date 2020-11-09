@@ -16,8 +16,6 @@ assert all([
         'AUTHENTICATION_URL',
         'MONGODB_CONNECTION_STRING',
         'MAILGUN_API_KEY',
-        'ACCESS_TOKEN_TTL',
-        'REFRESH_TOKEN_TTL',
     ]
 ])
 
