@@ -18,16 +18,12 @@ assert all([
         'MAILGUN_API_KEY',
         'ACCESS_TOKEN_TTL',
         'REFRESH_TOKEN_TTL',
-        'SALT',
     ]
 ])
 
 # check that public/private keypair is provided
 assert 'jwtRS256.key' in os.listdir()
 assert 'jwtRS256.key.pub' in os.listdir()
-
-PRIVATE_KEY = open('jwtRS256.key').read()
-PUBLIC_KEY = open('jwtRS256.key.pub').read()
 
 # development / production / testing environment specification
 ENVIRONMENT = os.getenv('ENVIRONMENT')
