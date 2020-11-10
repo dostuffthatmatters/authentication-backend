@@ -29,8 +29,8 @@ class PasswordManager:
 class TokenManager:
     """The TokenManager manages encoding and decoding JSON Web Tokens."""
 
-    PUBLIC_KEY = open('jwtRS256.key.pub').read()
-    PRIVATE_KEY = open('jwtRS256.key').read()
+    PUBLIC_KEY = os.getenv('PUBLIC_KEY')
+    PRIVATE_KEY = os.getenv('PRIVATE_KEY')
     ACCESS_TOKEN_TTL = 12*60*60  # 12 hours
     REFRESH_TOKEN_TTL = 60*60  # 1 hour
 

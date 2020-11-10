@@ -16,19 +16,18 @@ assert all([
         'AUTHENTICATION_URL',
         'MONGODB_CONNECTION_STRING',
         'MAILGUN_API_KEY',
+        'PUBLIC_KEY',
+        'PRIVATE_KEY',
     ]
 ])
 
-# check that public/private keypair is provided
-assert 'jwtRS256.key' in os.listdir()
-assert 'jwtRS256.key.pub' in os.listdir()
 
 # development / production / testing environment specification
 ENVIRONMENT = os.getenv('ENVIRONMENT')
 # MongoDB connection string
 MONGODB_CONNECTION_STRING = os.getenv('MONGODB_CONNECTION_STRING')
 # public JWT signature key
-PUBLIC_KEY = open('jwtRS256.key.pub').read()
+PUBLIC_KEY = os.getenv('PUBLIC_KEY')
 
 
 # create fastapi app
