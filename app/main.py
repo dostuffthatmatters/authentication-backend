@@ -1,4 +1,5 @@
 import os
+import base64
 
 from fastapi import FastAPI, Form
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -16,10 +17,15 @@ assert all([
         'AUTHENTICATION_URL',
         'MONGODB_CONNECTION_STRING',
         'MAILGUN_API_KEY',
-        'PUBLIC_KEY',
-        'PRIVATE_KEY',
+        'PUBLIC_RSA_KEY',
+        'PRIVATE_RSA_KEY',
     ]
 ])
+
+
+# decode public/private key pair
+os.environ['PUBLIC_RSA_KEY'] = base64.b64decode(os.getenv('PUBLIC_RSA_KEY'))
+os.environ['PRIVATE_RSA_KEY'] = base64.b64decode(os.getenv('PRIVATE_RSA_KEY'))
 
 
 # development / production / testing environment specification

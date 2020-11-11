@@ -29,8 +29,8 @@ class PasswordManager:
 class TokenManager:
     """The TokenManager manages encoding and decoding JSON Web Tokens."""
 
-    PUBLIC_KEY = os.getenv('PUBLIC_KEY')
-    PRIVATE_KEY = os.getenv('PRIVATE_KEY')
+    PUBLIC_RSA_KEY = os.getenv('PUBLIC_RSA_KEY')
+    PRIVATE_RSA_KEY = os.getenv('PRIVATE_RSA_KEY')
     ACCESS_TOKEN_TTL = 12*60*60  # 12 hours
     REFRESH_TOKEN_TTL = 60*60  # 1 hour
 
@@ -41,7 +41,7 @@ class TokenManager:
             'iat': datetime.utcnow(),
             'exp': datetime.utcnow() + timedelta(ttl),
         }
-        return jwt.encode(payload, self.PRIVATE_KEY, algorithm='RS256')
+        return jwt.encode(payload, self.PRIVATE_RSA_KEY, algorithm='RS256')
 
     def generate_access_token(self, user_id: str):
         """Generate an access token JWT containing the user id."""
@@ -54,7 +54,7 @@ class TokenManager:
     def decode(self, token: str):
         """Decode the given JWT and return the user id."""
         try:
-            payload = jwt.decode(token, self.PUBLIC_KEY, algorithm='RS256')
+            payload = jwt.decode(token, self.PUBLIC_RSA_KEY, algorithm='RS256')
         except ExpiredSignatureError:
             raise HTTPException(401, 'token expired')
         except InvalidSignatureError:
