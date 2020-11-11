@@ -5,6 +5,7 @@ from fastapi import FastAPI, Form
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from app.account import AccountManager
+from app.cryptography import TokenManager
 
 
 # check that required environment variables are set
@@ -33,7 +34,7 @@ ENVIRONMENT = os.getenv('ENVIRONMENT')
 # MongoDB connection string
 MONGODB_CONNECTION_STRING = os.getenv('MONGODB_CONNECTION_STRING')
 # public JWT signature key
-PUBLIC_KEY = os.getenv('PUBLIC_KEY')
+PUBLIC_RSA_KEY = os.getenv('PUBLIC_RSA_KEY')
 
 
 # create fastapi app
@@ -45,14 +46,15 @@ database = motor_client[ENVIRONMENT]
 # instantiate account manager
 # TODO database used anywhere else? -> put database setup inside AccountManager
 account_manager = AccountManager(database)
+# instantiate token manager
+token_manager = TokenManager(database)
 
 
 @app.get('/')
 def status():
     return {
         'environment': ENVIRONMENT,
-        'public_key': PUBLIC_KEY,
-        'private_key': 'loljustkidding',
+        'public_rsa_key': PUBLIC_RSA_KEY,
     }
 
 

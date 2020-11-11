@@ -65,7 +65,7 @@ class AccountManager:
         unverified_account = {
             '_id': secrets.token_hex(64),
             'email': email,
-            'pwdhash': self.password_manager.hashpwd(password),
+            'pwdhash': self.password_manager.hash_password(password),
             'created': datetime.utcnow(),
         }
         while True:
@@ -99,7 +99,7 @@ class AccountManager:
         if unverified_account is None:
             raise HTTPException(401, 'invalid token')
         pwdhash = unverified_account['pwdhash']
-        if not self.password_manager.verifypwd(password, pwdhash):
+        if not self.password_manager.verify_password(password, pwdhash):
             raise HTTPException(401, 'invalid password')
         verified_account = {
 
