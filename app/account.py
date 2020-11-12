@@ -37,12 +37,14 @@ class AccountManager:
         )
         self.password_manager = PasswordManager()
 
-    async def fetch(self, email: str):
-        """Fetch an account given its primary key."""
-        return await self.verified.find_one(
-            filter={'email': email},
+    async def fetch(self, uid: str):
+        """Fetch an account given its primary user identifier key."""
+        account = await self.verified.find_one(
+            filter={'_id': uid},
             projection={'_id': False},
         )
+        account['uid'] = uid
+        return account
 
     async def create(self, email: str, password: str):
         """Create a new account in the database."""
