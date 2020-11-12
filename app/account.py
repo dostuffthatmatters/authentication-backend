@@ -43,6 +43,8 @@ class AccountManager:
             filter={'_id': uid},
             projection={'_id': False},
         )
+        if account is None:
+            raise HTTPException(404, 'account not found')
         account['uid'] = uid
         return account
 

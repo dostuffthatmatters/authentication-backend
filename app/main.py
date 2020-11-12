@@ -58,8 +58,8 @@ def status():
     }
 
 
-@app.post('/registration')
-async def create(
+@app.post('/account/register')
+async def register(
         email: str = Form(..., description='The primary account key'),
         password: str = Form(..., description='The account password'),
     ):
@@ -67,13 +67,13 @@ async def create(
     return {'oauth2_token': 'TODO'}
 
 
-@app.post('/registration/resend-verification-email')
+@app.post('/account/resend-verification-email')
 async def resend_verification_email():
     raise HTTPException(501, 'not implemented')
 
 
-@app.post('/verification')
-async def verify(
+@app.post('/account/verify-email-address')
+async def verify_email_address(
         token: str = Form(..., description='The account verification token'),
         password: str = Form(..., description='The account password'),
     ):
@@ -86,14 +86,11 @@ async def authenticate_from_password():
     raise HTTPException(501, 'not implemented')
 
 
-@app.post('/authentication/access-token')
-async def authenticate_from_access_token():
-    raise HTTPException(501, 'not implemented')
-
-
-@app.post('/authentication/refresh-token')
-async def authenticate_from_refresh_token():
-    raise HTTPException(501, 'not implemented')
+@app.post('/authentication/token')
+async def authenticate_from_token(token: str = Form(...)):
+    """Authenticate a user from an access or refresh JSON web token."""
+    uid = token_manager.decode(token)
+    return await account_manager.fetch(uid)
 
 
 @app.post('/password/change')
@@ -106,6 +103,6 @@ async def request_password_reset():
     raise HTTPException(501, 'not implemented')
 
 
-@app.post('/password/reset')
-async def reset_password():
+@app.post('/password/set-new-with-reset-token')
+async def set_new_password():
     raise HTTPException(501, 'not implemented')
