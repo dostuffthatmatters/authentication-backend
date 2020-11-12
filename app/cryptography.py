@@ -31,8 +31,8 @@ class TokenManager:
 
     PUBLIC_RSA_KEY = os.getenv('PUBLIC_RSA_KEY')
     PRIVATE_RSA_KEY = os.getenv('PRIVATE_RSA_KEY')
-    ACCESS_TOKEN_TTL = 12*60*60  # 12 hours
-    REFRESH_TOKEN_TTL = 60*60  # 1 hour
+    ACCESS_TOKEN_TTL = 60*60  # 1 hour
+    REFRESH_TOKEN_TTL = 48*60*60  # 2 days
 
     def generate(self, user_id: str, ttl: int):
         """Generate a JWT containing the user id and an expiration date."""
