@@ -42,6 +42,9 @@ async def login_form_route(
     email: str = Form(...),
     password: str = Form(...)
 ):
+
+    # basic email/password login
+
     account = await authenticate_from_login(email, password)
     return {
         "oauth2_token": generate_oauth_token(account),
@@ -53,6 +56,9 @@ async def login_form_route(
 async def login_access_token_route(
     access_token: str = Form(...)
 ):
+
+    # check if access token (short lived) is still valid
+
     # Don't need to generate a new jwt when the access_token is still valid
     account = await authenticate_from_access_token(access_token)
     return {
@@ -64,6 +70,10 @@ async def login_access_token_route(
 async def login_refresh_token_route(
     refresh_token: str = Form(...)
 ):
+
+    # if access token is no longer valid, check if refresh token is still valid
+    # maybe only send back new access token with same refresh token?
+
     account = await authenticate_from_refresh_token(refresh_token)
     return {
         "oauth2_token": generate_oauth_token(account),
@@ -76,6 +86,9 @@ async def register_route(
     email: str = Form(...),
     password: str = Form(...)
 ):
+
+    # create new user
+
     account = await create_account(email, password)
     return {
         "oauth2_token": generate_oauth_token(account),
@@ -88,6 +101,9 @@ async def verify_route(
     email_token: str = Form(...),
     password: str = Form(...)
 ):
+
+    # verify account
+
     account = await verify_account(email_token, password)
     return {
         "oauth2_token": generate_oauth_token(account),
@@ -99,6 +115,9 @@ async def verify_route(
 async def account_route(
     access_token: str = Depends(oauth2_scheme)
 ):
+
+    # get account data (obsolete because login/access does the same)
+
     return await authenticate_from_access_token(access_token)
 
 
