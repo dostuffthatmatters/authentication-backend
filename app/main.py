@@ -1,7 +1,7 @@
 import os
 import base64
 
-from fastapi import FastAPI, Form
+from fastapi import FastAPI, Form, HTTPException
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from app.account import AccountManager
@@ -67,6 +67,11 @@ async def create(
     return {'oauth2_token': 'TODO'}
 
 
+@app.post('/registration/resend-verification-email')
+async def resend_verification_email():
+    raise HTTPException(501, 'not implemented')
+
+
 @app.post('/verification')
 async def verify(
         token: str = Form(..., description='The account verification token'),
@@ -74,3 +79,33 @@ async def verify(
     ):
     await account_manager.verify(token, password)
     return {'oauth2_token': 'TODO'}
+
+
+@app.post('/authentication/password')
+async def authenticate_from_password():
+    raise HTTPException(501, 'not implemented')
+
+
+@app.post('/authentication/access-token')
+async def authenticate_from_access_token():
+    raise HTTPException(501, 'not implemented')
+
+
+@app.post('/authentication/refresh-token')
+async def authenticate_from_refresh_token():
+    raise HTTPException(501, 'not implemented')
+
+
+@app.post('/password/change')
+async def change_password():
+    raise HTTPException(501, 'not implemented')
+
+
+@app.post('/password/request-reset')
+async def request_password_reset():
+    raise HTTPException(501, 'not implemented')
+
+
+@app.post('/password/reset')
+async def reset_password():
+    raise HTTPException(501, 'not implemented')
